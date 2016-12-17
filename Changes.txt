@@ -1,0 +1,11 @@
+
+MyJingle - 0.2.0
+================
+- 0000431: [MyJingle - Sample App] support for password instead of Google Token (feurle)
+- 0000430: [MyJingle - Sample App] add a setup projekt + release as binary (feurle)
+- 0000421: [LibJingle] port to LibJingle version 0.2.0 (feurle)
+
+MyJingle - 0.1.0
+================
+
+initial release

@@ -1,0 +1,606 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\XMLLite">
+      <UniqueIdentifier>{aa8f156b-e6ec-486d-9bfc-a25ba9822d47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\XMPP">
+      <UniqueIdentifier>{2951b045-f2af-4c0b-8081-1ea123845eca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\base">
+      <UniqueIdentifier>{faa87138-0ce0-4d6c-8e8a-e06bdff6bcce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\p2p">
+      <UniqueIdentifier>{75c69327-5630-4582-b6e8-7cf5c913b195}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\p2p\base">
+      <UniqueIdentifier>{4e773571-d626-4309-9b28-c03789c2aac3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\p2p\client">
+      <UniqueIdentifier>{60bc2ced-64ab-4c40-bc68-27d2cdf95857}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\session">
+      <UniqueIdentifier>{638323ec-c0b6-472c-acb1-5e01e7d3efd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\session\tunnel">
+      <UniqueIdentifier>{95a8814d-70f5-45dc-b957-b0d92262f6fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\examples">
+      <UniqueIdentifier>{9b4ecb47-af2d-4fe2-bc78-95c8bcd69ddf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\examples\login">
+      <UniqueIdentifier>{f0c9d9a3-eaca-4c43-826a-c5b68de10df1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\examples\call">
+      <UniqueIdentifier>{9264ef02-8c6b-47a1-b24e-cad6a667a890}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\XMLLite">
+      <UniqueIdentifier>{be31686e-b3cd-488d-a77d-456bc3241741}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\XMPP">
+      <UniqueIdentifier>{b89abf5d-9848-4a2e-8472-3b13757f7bb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\base">
+      <UniqueIdentifier>{2404776a-08ac-4053-b545-403ab037bc3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\p2p">
+      <UniqueIdentifier>{82b7e622-653f-4bac-a2ee-332b7f3d1527}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\p2p\base">
+      <UniqueIdentifier>{b4ffdda0-85a2-4a3d-9291-b5b19ad61c9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\p2p\client">
+      <UniqueIdentifier>{291156fb-2210-4544-a0dd-78e7fab8cc7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\session">
+      <UniqueIdentifier>{59db64dc-08bf-4b13-951a-780562b93ac2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\session\tunnel">
+      <UniqueIdentifier>{f22a5448-ca79-470e-a8b3-e8ab85766a3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\session\phone">
+      <UniqueIdentifier>{9ee682d3-f991-4e7f-8072-a7ee043c890c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\examples">
+      <UniqueIdentifier>{332eb301-918b-4674-9a1c-f33c8acd7a27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\examples\login">
+      <UniqueIdentifier>{d09f47bc-c5eb-46ab-8cc4-f4e4025624be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Source Files\examples\pcp">
+      <UniqueIdentifier>{629692f5-a840-4168-9119-22dfc588376e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="xmllite\qname.cc">
+      <Filter>Source Files\XMLLite</Filter>
+    </ClCompile>
+    <ClCompile Include="xmllite\xmlbuilder.cc">
+      <Filter>Source Files\XMLLite</Filter>
+    </ClCompile>
+    <ClCompile Include="xmllite\xmlconstants.cc">
+      <Filter>Source Files\XMLLite</Filter>
+    </ClCompile>
+    <ClCompile Include="xmllite\xmlelement.cc">
+      <Filter>Source Files\XMLLite</Filter>
+    </ClCompile>
+    <ClCompile Include="xmllite\xmlnsstack.cc">
+      <Filter>Source Files\XMLLite</Filter>
+    </ClCompile>
+    <ClCompile Include="xmllite\xmlparser.cc">
+      <Filter>Source Files\XMLLite</Filter>
+    </ClCompile>
+    <ClCompile Include="xmllite\xmlprinter.cc">
+      <Filter>Source Files\XMLLite</Filter>
+    </ClCompile>
+    <ClCompile Include="xmpp\constants.cc">
+      <Filter>Source Files\XMPP</Filter>
+    </ClCompile>
+    <ClCompile Include="xmpp\jid.cc">
+      <Filter>Source Files\XMPP</Filter>
+    </ClCompile>
+    <ClCompile Include="xmpp\saslmechanism.cc">
+      <Filter>Source Files\XMPP</Filter>
+    </ClCompile>
+    <ClCompile Include="xmpp\xmppclient.cc">
+      <Filter>Source Files\XMPP</Filter>
+    </ClCompile>
+    <ClCompile Include="xmpp\xmppengineimpl.cc">
+      <Filter>Source Files\XMPP</Filter>
+    </ClCompile>
+    <ClCompile Include="xmpp\xmppengineimpl_iq.cc">
+      <Filter>Source Files\XMPP</Filter>
+    </ClCompile>
+    <ClCompile Include="xmpp\xmpplogintask.cc">
+      <Filter>Source Files\XMPP</Filter>
+    </ClCompile>
+    <ClCompile Include="xmpp\xmppstanzaparser.cc">
+      <Filter>Source Files\XMPP</Filter>
+    </ClCompile>
+    <ClCompile Include="xmpp\xmpptask.cc">
+      <Filter>Source Files\XMPP</Filter>
+    </ClCompile>
+    <ClCompile Include="base\asyncpacketsocket.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\asynctcpsocket.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\asyncudpsocket.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\base64.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\bytebuffer.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\common.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\host.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\logging.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\md5c.c">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\messagequeue.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\network.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\physicalsocketserver.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\proxyinfo.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\schanneladapter.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\socketadapters.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\socketaddress.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\ssladapter.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\stream.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\stringutils.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\task.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\taskrunner.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\thread.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\time.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\win32socketserver.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\winfirewall.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\winping.cc">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\base\helpers.cc">
+      <Filter>Source Files\p2p\base</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\base\p2psocket.cc">
+      <Filter>Source Files\p2p\base</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\base\port.cc">
+      <Filter>Source Files\p2p\base</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\base\pseudotcp.cc">
+      <Filter>Source Files\p2p\base</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\base\relayport.cc">
+      <Filter>Source Files\p2p\base</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\base\session.cc">
+      <Filter>Source Files\p2p\base</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\base\sessionmanager.cc">
+      <Filter>Source Files\p2p\base</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\base\socketmanager.cc">
+      <Filter>Source Files\p2p\base</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\base\stun.cc">
+      <Filter>Source Files\p2p\base</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\base\stunport.cc">
+      <Filter>Source Files\p2p\base</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\base\stunrequest.cc">
+      <Filter>Source Files\p2p\base</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\base\tcpport.cc">
+      <Filter>Source Files\p2p\base</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\base\udpport.cc">
+      <Filter>Source Files\p2p\base</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\client\basicportallocator.cc">
+      <Filter>Source Files\p2p\client</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\client\sessionclient.cc">
+      <Filter>Source Files\p2p\client</Filter>
+    </ClCompile>
+    <ClCompile Include="p2p\client\socketmonitor.cc">
+      <Filter>Source Files\p2p\client</Filter>
+    </ClCompile>
+    <ClCompile Include="session\tunnel\tunnelsessionclient.cc">
+      <Filter>Source Files\session\tunnel</Filter>
+    </ClCompile>
+    <ClCompile Include="examples\login\xmppauth.cc">
+      <Filter>Source Files\examples\login</Filter>
+    </ClCompile>
+    <ClCompile Include="examples\login\xmpppump.cc">
+      <Filter>Source Files\examples\login</Filter>
+    </ClCompile>
+    <ClCompile Include="examples\login\xmppsocket.cc">
+      <Filter>Source Files\examples\login</Filter>
+    </ClCompile>
+    <ClCompile Include="examples\login\xmppthread.cc">
+      <Filter>Source Files\examples\login</Filter>
+    </ClCompile>
+    <ClCompile Include="examples\call\presenceouttask.cc">
+      <Filter>Source Files\examples\call</Filter>
+    </ClCompile>
+    <ClCompile Include="examples\call\presencepushtask.cc">
+      <Filter>Source Files\examples\call</Filter>
+    </ClCompile>
+    <ClCompile Include="session\phone\audiomonitor.cc">
+      <Filter>Header Files\session\phone</Filter>
+    </ClCompile>
+    <ClCompile Include="session\phone\call.cc">
+      <Filter>Header Files\session\phone</Filter>
+    </ClCompile>
+    <ClCompile Include="session\phone\channelmanager.cc">
+      <Filter>Header Files\session\phone</Filter>
+    </ClCompile>
+    <ClCompile Include="session\phone\phonesessionclient.cc">
+      <Filter>Header Files\session\phone</Filter>
+    </ClCompile>
+    <ClCompile Include="session\phone\voicechannel.cc">
+      <Filter>Header Files\session\phone</Filter>
+    </ClCompile>
+    <ClCompile Include="examples\pcp\pcp_main.cc">
+      <Filter>Source Files\examples\pcp</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="xmllite\qname.h">
+      <Filter>Header Files\XMLLite</Filter>
+    </ClInclude>
+    <ClInclude Include="xmllite\xmlbuilder.h">
+      <Filter>Header Files\XMLLite</Filter>
+    </ClInclude>
+    <ClInclude Include="xmllite\xmlconstants.h">
+      <Filter>Header Files\XMLLite</Filter>
+    </ClInclude>
+    <ClInclude Include="xmllite\xmlelement.h">
+      <Filter>Header Files\XMLLite</Filter>
+    </ClInclude>
+    <ClInclude Include="xmllite\xmlnsstack.h">
+      <Filter>Header Files\XMLLite</Filter>
+    </ClInclude>
+    <ClInclude Include="xmllite\xmlparser.h">
+      <Filter>Header Files\XMLLite</Filter>
+    </ClInclude>
+    <ClInclude Include="xmllite\xmlprinter.h">
+      <Filter>Header Files\XMLLite</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\asyncsocket.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\constants.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\jid.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\plainsaslhandler.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\prexmppauth.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\saslcookiemechanism.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\saslhandler.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\saslmechanism.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\saslplainmechanism.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\xmppclient.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\xmppclientsettings.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\xmppengine.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\xmppengineimpl.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\xmpplogintask.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\xmpppassword.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\xmppstanzaparser.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="xmpp\xmpptask.h">
+      <Filter>Header Files\XMPP</Filter>
+    </ClInclude>
+    <ClInclude Include="base\asyncfile.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\asyncpacketsocket.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\asyncsocket.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\asynctcpsocket.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\asyncudpsocket.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\base64.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\basicdefs.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\basictypes.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\bytebuffer.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\byteorder.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\common.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\criticalsection.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\host.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\linked_ptr.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\logging.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\md5.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\messagequeue.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\network.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\physicalsocketserver.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\proxyinfo.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\schanneladapter.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\scoped_ptr.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\sec_buffer.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\sigslot.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\socket.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\socketadapters.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\socketaddress.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\socketaddresspair.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\socketfactory.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\socketserver.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\ssladapter.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\stl_decl.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\stream.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\stringutils.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\task.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\taskrunner.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\thread.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\time.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\win32.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\win32socketserver.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\winfirewall.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\winping.h">
+      <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\candidate.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\helpers.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\p2psocket.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\port.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\portallocator.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\pseudotcp.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\relayport.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\relayserver.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\session.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\sessiondescription.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\sessionid.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\sessionmanager.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\sessionmessage.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\sessionmessagefactory.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\sessionresponsemessage.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\socketmanager.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\stun.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\stunport.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\stunrequest.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\stunserver.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\tcpport.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\base\udpport.h">
+      <Filter>Header Files\p2p\base</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\client\basicportallocator.h">
+      <Filter>Header Files\p2p\client</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\client\sessionclient.h">
+      <Filter>Header Files\p2p\client</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\client\socketmonitor.h">
+      <Filter>Header Files\p2p\client</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\client\xmppsessionmessage.h">
+      <Filter>Header Files\p2p\client</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\client\xmppsessionmessagefactory.h">
+      <Filter>Header Files\p2p\client</Filter>
+    </ClInclude>
+    <ClInclude Include="p2p\client\xmppsessionresponsemessage.h">
+      <Filter>Header Files\p2p\client</Filter>
+    </ClInclude>
+    <ClInclude Include="session\receiver.h">
+      <Filter>Header Files\session</Filter>
+    </ClInclude>
+    <ClInclude Include="session\sessionsendtask.h">
+      <Filter>Header Files\session</Filter>
+    </ClInclude>
+    <ClInclude Include="session\tunnel\tunnelsessionclient.h">
+      <Filter>Header Files\session\tunnel</Filter>
+    </ClInclude>
+    <ClInclude Include="examples\login\xmppauth.h">
+      <Filter>Header Files\examples\login</Filter>
+    </ClInclude>
+    <ClInclude Include="examples\login\xmpppump.h">
+      <Filter>Header Files\examples\login</Filter>
+    </ClInclude>
+    <ClInclude Include="examples\login\xmppsocket.h">
+      <Filter>Header Files\examples\login</Filter>
+    </ClInclude>
+    <ClInclude Include="examples\login\xmppthread.h">
+      <Filter>Header Files\examples\login</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

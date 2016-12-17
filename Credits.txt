@@ -1,0 +1,59 @@
+Credits
+=======
+
+LibJingle
+---------
+Google Inc
+
+
+Speex
+-----
+Jean-Marc Valin <jean-marc.valin@hermes.usherb.ca>
+   All the code except the following
+
+David Rowe <david@voicetronix.com.au> via VoiceTronix
+   lsp.c lsp.h 
+   Also ideas and feedback
+
+John Francis Edwards:
+   wave_out.[ch], some #ifdefs for windows port and MSVC project files
+
+Atsuhiko Yamanaka <ymnk@jcraft.com>:
+   Patch to speexenc.c to add Vorbis comment format
+
+Radim Kolar <hsn@cybermail.net>:
+   Patch to speexenc.c for supporting more input formats
+
+
+G.711, linphone
+---------------
+/*
+ *  PCM - A-Law conversion
+ *  Copyright (c) 2000 by Abramo Bagnara <abramo@alsa-project.org>
+ *
+ *  Wrapper for linphone Codec class by Simon Morlat <simon.morlat@free.fr>
+ */
+
+
+expat
+-----
+Copyright (c) 1998, 1999 James Clark. Expat is subject to the Mozilla Public 
+License Version 1.1 (http://www.mozilla.org/NPL/NPL-1_1Final.html). 
+Alternatively you may use expat under the GNU General Public License 
+(http://www.gnu.org/copyleft/gpl.html) instead. Please contact me if you 
+wish to negotiate an alternative license. 
+
+BEAT
+----
+GPL, bluehands GmbH & Co.mmunication KG
+David Feurle
+
+SString, beatlog
+----------------
+Heiner Wolf
+
+
+History
+=======
+01.02.2006 hw initial version
+01.02.2006 df added hw

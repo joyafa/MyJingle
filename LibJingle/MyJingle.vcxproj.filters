@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Beat">
+      <UniqueIdentifier>{9799d48a-2230-4d85-bce3-f941d1303d2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Beat\Header Files">
+      <UniqueIdentifier>{b8fdd80d-2af5-4878-9fde-4c48c77c3ac9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Beat\Source Files">
+      <UniqueIdentifier>{56c50700-3fdc-4fb2-8303-5184fdbdc1d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App">
+      <UniqueIdentifier>{fef90fcc-e6d8-4993-bb3f-59ee21480a0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App\Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="App\Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="App\Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\References\beat\Codec.h">
+      <Filter>Beat\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="presenceouttask.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="presencepushtask.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="BeatMediaChannel.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BeatMediaEngine.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CryptoService.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FromJingleMessage.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FromJingleMessageBase.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InsecurePassword.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JingleMain.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LibJingle.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LibJingleDlg.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageTask.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToJingleMessage.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32CallClient.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32JingleAdapter.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\References\beat\beatLog_.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\References\beat\Codec.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\References\beat\DirectXFullDuplexAudioDevice.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\References\beat\Exception.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\References\beat\Global.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\References\beat\Jitter.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\References\beat\JitterBuffer.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\References\beat\MyTime.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\References\beat\NetAddress.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\References\beat\Packet.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\References\beat\SElem.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\References\beat\SoundCapture.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\References\beat\SoundInterface.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\References\beat\SoundPlay.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\References\beat\SString.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\References\beat\Thread.cpp">
+      <Filter>Beat\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="presenceouttask.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="presencepushtask.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="BeatMediaChannel.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BeatMediaEngine.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CryptoService.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FromJingleMessage.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FromJingleMessageBase.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InsecurePassword.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JingleMain.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LibJingle.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LibJingleDlg.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageTask.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ToJingleMessage.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32CallClient.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32JingleAdapter.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\LibJingle.ico">
+      <Filter>App\Resource Files</Filter>
+    </None>
+    <None Include="res\LibJingle.rc2">
+      <Filter>App\Resource Files</Filter>
+    </None>
+    <None Include="..\Changes.txt" />
+    <None Include="..\Credits.txt" />
+    <None Include="..\Licence.txt" />
+    <None Include="..\ReadMe.txt" />
+    <None Include="..\Usage.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LibJingle.rc">
+      <Filter>App\Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

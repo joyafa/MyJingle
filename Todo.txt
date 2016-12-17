@@ -1,0 +1,19 @@
+Todo
+====
+
+Features:
+---------
+- Add the Speex preprocessor functions (auto gaining, silence detection) to the G711 codec
+- Support for other Jabber servers than Google Talk
+- Complete and test the Speex codec implementation
+
+Bugs:
+-----
+- If not correctly logged in you need to restart the programm, because the connect button won't work
+- Implement winPing correct. This is possibly related to the following:
+- If a direct connect is not possible and the P2P component of LibJingle is used, then the session setup takes longer than with Google Talk
+- If an incomming call is cancelled the msgBox won't disappear.
+
+History:
+--------
+31.01.2006 df initial version
