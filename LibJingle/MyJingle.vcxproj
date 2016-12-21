@@ -69,7 +69,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>./;../References/Expat-1.95.8/Source/lib;../References/speex-1.1.11.1/include;../References;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../References/Expat-1.95.8/Source/lib;../References/speex/include;../References;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -85,7 +85,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>Ws2_32.lib;Secur32.lib;iphlpapi.lib;libexpat.lib;libexpatw.lib;Kernel32.lib;Crypt32.lib;winmm.lib;Dsound.lib;../References/speex-1.1.11.1/win32/libspeex/Release/libspeex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Ws2_32.lib;Secur32.lib;iphlpapi.lib;libexpat.lib;libexpatw.lib;Kernel32.lib;Crypt32.lib;winmm.lib;Dsound.lib;../References/speex/bin/libspeex.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>../References/Expat-1.95.8/Libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
