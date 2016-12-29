@@ -22,6 +22,9 @@
 
 #include "DirectXFullDuplexAudioDevice.h"
 #include "objbase.h"
+#include "SString.h"
+#include "Exception.h"
+#include <iostream>
 
 DirectXFullDuplexAudioDevice* gDirectXFullDuplexAudioDevice = 0;
 DirectXFullDuplexAudioDevice* GetDirectXFullDuplexAudioDeviceInstance(WAVEFORMATEX& format, HWND window)
@@ -44,6 +47,56 @@ m_Format(format)
 ,m_BytesPerMsec(-1)
 {
 }
+
+
+#define LS(r) {r, _S(#r)}
+
+SCHAR *DirectXFullDuplexAudioDevice::GetErrName(int ErrID)
+{
+	static struct 
+	{
+		int nErrID;
+		SCHAR *pErrName;
+	}ErrName[] =
+	{
+		LS(DSERR_ALLOCATED         ),     
+		LS(DSERR_CONTROLUNAVAIL    ), 
+		LS(DSERR_INVALIDPARAM      ), 
+		LS(DSERR_INVALIDCALL       ), 
+		LS(DSERR_GENERIC           ), 
+		LS(DSERR_PRIOLEVELNEEDED   ), 
+		LS(DSERR_OUTOFMEMORY       ), 
+		LS(DSERR_BADFORMAT         ), 
+		LS(DSERR_UNSUPPORTED       ), 
+		LS(DSERR_NODRIVER          ), 
+		LS(DSERR_ALREADYINITIALIZED), 
+		LS(DSERR_NOAGGREGATION     ), 
+		LS(DSERR_BUFFERLOST        ), 
+		LS(DSERR_OTHERAPPHASPRIO   ), 
+		LS(DSERR_UNINITIALIZED     ), 
+		LS(DSERR_NOINTERFACE       ), 
+		LS(DSERR_ACCESSDENIED      ), 
+		LS(DSERR_BUFFERTOOSMALL    ), 
+		LS(DSERR_DS8_REQUIRED      ), 
+		LS(DSERR_SENDLOOP          ), 
+		LS(DSERR_BADSENDBUFFERGUID ), 
+		LS(DSERR_OBJECTNOTFOUND    ), 
+		LS(DSERR_FXUNAVAILABLE     ), 
+		0, _S("")
+	};
+	using namespace std;
+	for (int i=0;i<sizeof(ErrName) / sizeof(ErrName[0]);++i)
+	{
+		cout << ErrName[i].nErrID << endl;
+		if (ErrID == ErrName[i].nErrID)
+		{
+			return ErrName[i].pErrName;
+		}
+	}
+
+	return _S("");
+}
+
 
 void DirectXFullDuplexAudioDevice::Init()
 {
@@ -77,8 +130,8 @@ void DirectXFullDuplexAudioDevice::Init()
 		m_BufferDesc.dwReserved = 0;
 		m_BufferDesc.lpwfxFormat = &m_Format;
 		m_BufferDesc.dwFlags = DSCBCAPS_CTRLFX;
-		m_BufferDesc.lpDSCFXDesc = 0;
-		m_BufferDesc.dwFXCount = 0;
+		m_BufferDesc.lpDSCFXDesc = m_Effects;
+		m_BufferDesc.dwFXCount = 2;
 
 		ZeroMemory(&m_PlayBufferDesc, sizeof(DSBUFFERDESC));
 		m_PlayBufferDesc.dwSize = sizeof(DSBUFFERDESC);
@@ -120,9 +173,8 @@ void DirectXFullDuplexAudioDevice::Init()
 			);
 			if (!SUCCEEDED(res))
 			{
-
 				SString message;
-				message.strcatf(_S("While init Capture Direct Sound, DirectX Error: %d"), res);
+				message.strcatf(_S("While init Capture Direct Sound, DirectX Error: %s"), GetErrName(res));
 				throw Exception(message);
 			}
 		}
