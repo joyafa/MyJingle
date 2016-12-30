@@ -22,6 +22,7 @@
 
 #include "SSystem.h"
 #include "SString.h"
+#include <vector>
 
 // ============================================================================
 
@@ -433,4 +434,27 @@ SString operator+(SString& a, SCHAR* b)
   SString sb(b);
   return a + sb;
 }
+
+
+
+//Unicode 编码转为多字节编码   
+bool  UnicodeToMultiBytes(std::vector<char>& pmb,  const wchar_t * pun, int uLen)  
+{  
+	// convert an widechar string to Multibyte    
+	int MBLen = WideCharToMultiByte(CP_ACP, 0, pun, uLen, NULL, 0, NULL, NULL);  
+	if (MBLen <=0)  
+	{  
+		return false ;  
+	}  
+	pmb.resize(MBLen);  
+	int nRtn = WideCharToMultiByte(CP_ACP, 0, pun, uLen, &*pmb.begin(), MBLen, NULL, NULL);  
+
+	if(nRtn != MBLen)  
+	{  
+		pmb.clear();  
+		return false ;  
+	}  
+
+	return true ;  
+}  
 

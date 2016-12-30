@@ -22,7 +22,7 @@
 
 #include "SoundRecorder.h"
 
-SoundSerializer::SoundSerializer(const char* filename):
+SoundSerializer::SoundSerializer(const SCHAR* filename):
 m_Serializer(filename)
 ,PacketReciever()
 ,m_PacketsInFile(0)
@@ -63,8 +63,10 @@ void SoundDeserializer::Init()
 	m_PacketsCount = m_Serializer.ObjectsInFile();
 	// throws Exception but can't be handled here
 	m_Packets = new Packet*[m_PacketsCount];
+	memset(m_Packets, 0, m_PacketsCount * sizeof(Packet*));
+
 	int length;
-	for(int i = 0; i < m_PacketsCount; m_PacketsCount++)
+	for(int i = 0; i < m_PacketsCount; ++i)
 	{
 		m_Serializer.Deserialize((void**)&m_Packets[i], &length, i);
 	}

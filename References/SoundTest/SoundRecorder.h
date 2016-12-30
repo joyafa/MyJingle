@@ -34,7 +34,7 @@
 class SoundSerializer : public PacketReciever
 {
 public:
-	SoundSerializer(const char* filename);
+	SoundSerializer(const SCHAR* filename);
 	~SoundSerializer(void);
 	 void AddPacket(Packet* packet, NetAddress* address);
 private:

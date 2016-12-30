@@ -60,6 +60,12 @@
     <ClInclude Include="SoundPlay.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Serializer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundRecorder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -102,6 +108,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SoundPlay.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Serializer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundRecorder.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
