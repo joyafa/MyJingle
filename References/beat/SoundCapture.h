@@ -40,6 +40,7 @@
 #include "Dsound.h"
 #include "Thread.h"
 #include "SoundInterface.h"
+#include "SoundRecorder.h"
 #endif
 
 
@@ -62,6 +63,7 @@ protected:
 	int m_FrameSize;
 	Codec* m_Encoder;
 	void CompressFrame(char* frame, int length);
+	SoundSerializer m_SoundSerializer;
 };
 
 

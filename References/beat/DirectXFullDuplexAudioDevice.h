@@ -56,7 +56,8 @@ private:
 	LPDIRECTSOUNDCAPTUREBUFFER8 m_CaptureBuffer;
 	LPDIRECTSOUND8 m_PlayDevice;
 	LPDIRECTSOUNDBUFFER8 m_PlayBuffer;
-	static const int s_PacketsInBuffer = 10;
+	//TODO:由原来的 10--->40 效果貌似没好, 这个值调大些,就比较连续了,不会说快了听不完整
+	static const int s_PacketsInBuffer = 20;
 	int m_BytesInPacket;
 	int m_BytesPerMsec;
 	DSCEFFECTDESC m_Effects[2];

@@ -77,8 +77,8 @@ void DirectXFullDuplexAudioDevice::Init()
 		m_BufferDesc.dwReserved = 0;
 		m_BufferDesc.lpwfxFormat = &m_Format;
 		m_BufferDesc.dwFlags = DSCBCAPS_CTRLFX;
-		m_BufferDesc.lpDSCFXDesc = 0;
-		m_BufferDesc.dwFXCount = 0;
+		m_BufferDesc.lpDSCFXDesc = m_Effects;
+		m_BufferDesc.dwFXCount = 2;
 
 		ZeroMemory(&m_PlayBufferDesc, sizeof(DSBUFFERDESC));
 		m_PlayBufferDesc.dwSize = sizeof(DSBUFFERDESC);
@@ -126,6 +126,9 @@ void DirectXFullDuplexAudioDevice::Init()
 				throw Exception(message);
 			}
 		}
+		DWORD dwFrequency = 0.0;
+		m_PlayBuffer->GetFrequency(&dwFrequency);
+		beatLog_Info(("DirectXFullDuplexAudioDevice", "Init", "m_PlayBuffer->GetFrequency: %d", dwFrequency));
 	}
 	m_Usage++;
 }
@@ -187,7 +190,7 @@ int DirectXFullDuplexAudioDevice::BytesInPacket()
 {
 	if (m_BytesInPacket == -1)
 	{
-		m_BytesInPacket = m_Format.nAvgBytesPerSec/50;
+		m_BytesInPacket = m_Format.nAvgBytesPerSec/100;//20ms====>10ms 测试声音好了很多,台式机话筒播放,笔记本听很好
 	}
 	return m_BytesInPacket;
 }

@@ -56,6 +56,7 @@ public:
 	float AveragePacketsInBuffer();
 	unsigned int PacketsInBuffer();
 protected:
+	//TODO:改成40 也没啥效果 20--->40,网上有人时间过20个最好
 	const static unsigned int s_MaxElems = 20;
 	Packet* m_Packets[s_MaxElems];
 	int m_Anfang;
@@ -63,8 +64,10 @@ protected:
 	void PlayStart();
 	void PlayStop();
 	Mutex m_Mutex;
+	//累计连续空包次数
 	unsigned int m_DontHaveAPacketSince;
 	float m_AveragePacketsInBuffer;
+	//衰减次数
 	const static int s_Attenuation = 3;
 	JitterStrategy m_JitterStrategy;
 	const static unsigned int s_DetectSilencePacketCount = 10;

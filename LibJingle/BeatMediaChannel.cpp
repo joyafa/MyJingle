@@ -36,8 +36,8 @@ m_Codec_PCM(160)
 	WAVEFORMATEX format;
 	format.wFormatTag = WAVE_FORMAT_PCM;
 	format.nChannels = 1;//立体声
-	format.nSamplesPerSec = 8000;
-	format.nAvgBytesPerSec = 16000;
+	format.nSamplesPerSec = 16000;//实际测试16K定位音质效果很好
+	format.nAvgBytesPerSec = format.nSamplesPerSec * 2;
 	format.nBlockAlign = 2;
 	format.wBitsPerSample = 16;
 	format.cbSize = 0;
@@ -112,7 +112,7 @@ void cricket::BeatMediaChannel::SetCodec(const char* codec)
 	{
 		if (!strcmp(codec, "speex"))
 		{
-		  m_SoundCapture->Encoder((Codec*)&m_Codec_Speex);
+		  m_SoundCapture->Encoder((Codec*)&m_Codec_Speex);//m_Codec_Speex
 		  m_SoundPlay->Decoder((Codec*)&m_Codec_Speex);
 		}
 		else

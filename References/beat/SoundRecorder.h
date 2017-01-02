@@ -28,15 +28,16 @@
 #endif // _MSC_VER > 1000
 
 #include "Global.h"
-#include "FileIO.h"
+//#include "FileIO.h"
 #include "SoundInterface.h"
+#include "Serializer.h"
 
 class SoundSerializer : public PacketReciever
 {
 public:
 	SoundSerializer(const SCHAR* filename);
 	~SoundSerializer(void);
-	 void AddPacket(Packet* packet, NetAddress* address);
+	 void AddPacket(Packet* packet, NetAddress* address = NULL);
 private:
 	int m_PacketsInFile;
 	Serializer m_Serializer;

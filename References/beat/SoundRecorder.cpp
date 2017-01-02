@@ -23,7 +23,7 @@
 #include "SoundRecorder.h"
 
 SoundSerializer::SoundSerializer(const SCHAR* filename):
-m_Serializer(filename, FileWriter::Mode::APPEND)
+m_Serializer(filename)
 ,PacketReciever()
 ,m_PacketsInFile(0)
 {
@@ -31,21 +31,31 @@ m_Serializer(filename, FileWriter::Mode::APPEND)
 
 SoundSerializer::~SoundSerializer(void)
 {
-	m_Serializer.Serialize(&m_PacketsInFile, sizeof(int));
+	m_Serializer.Serialize((char *)&m_PacketsInFile, sizeof(int));
 }
 
 void SoundSerializer::AddPacket(Packet* packet, NetAddress* address)
 {
 	if(packet != 0)
 	{
-		m_Serializer.Serialize(packet->GetPacket(), packet->PacketLength());
+		//m_Serializer.Serialize(packet->GetPacket(), packet->PacketLength());
+
+		//写入实际的数据 ,去掉头
+		//m_Serializer.Serialize(packet->RwData(), packet->RwDataLength());
+
 		//m_Serializer.Serialize(address, sizeof(NetAddress));
 		m_PacketsInFile++;
+		//if (1000 == m_PacketsInFile)
+		//{//写入文件中的是原始数据,未压缩处理的
+		//	m_Serializer.Serialize((char *)&m_PacketsInFile, sizeof(int));
+		//	m_Serializer.~Serializer();//强行关闭文件
+		//	MessageBox(NULL, _S("录音完成"), _S("OK"), MB_OK);
+		//}
 	}
 }
 
 SoundDeserializer::SoundDeserializer(const SCHAR* filename):
-m_Serializer(filename, FileWriter::Mode::APPEND)
+m_Serializer(filename/*, FileWriter::Mode::APPEND*/)
 ,PacketSender()
 ,m_PacketsCount(0)
 ,m_PosInPacketsArray(0)

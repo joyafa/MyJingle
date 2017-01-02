@@ -71,11 +71,13 @@ void JitterBuffer::AddPacket(Packet* packet, NetAddress* address)
 		unsigned int offset = 0;
 		if(m_Packets[m_Anfang] != 0)
 		{
+			//检查新接收到的包序号跟当前正在播放的包序号 差值,得到 包序号偏移值
 			offset = (int)packet->SequenceNumber() - (int)m_Packets[m_Anfang]->SequenceNumber();
 		}
 		if(offset>=0)
 		{
 			int pos;
+			//如果偏移小于防抖最大条数
 			if(offset<s_MaxElems)
 			{
 				pos = (m_Anfang + offset)%s_MaxElems;
@@ -86,7 +88,7 @@ void JitterBuffer::AddPacket(Packet* packet, NetAddress* address)
 				pos = m_Anfang;
 				m_Anfang = (m_Anfang+1)%s_MaxElems ;
 			}
-
+			//找到位置pos处的包如果还没被取走,则直接删除
 			if(m_Packets[pos]!=0)
 			{
 				//should never happen, but who knows
@@ -105,23 +107,26 @@ Packet* JitterBuffer::GetPacket(long* frequency, long origFrequency)
 	m_Mutex.Aquire();
 
 	unsigned int packetsInBuffer = PacketsInBuffer();
-
+	//取走当前 包播放
 	Packet* packet = m_Packets[m_Anfang];
+	//指针设置0
 	m_Packets[m_Anfang] = 0;
-
+	//播放为位置设置为下一个
 	m_Anfang = (m_Anfang+1)%s_MaxElems;
 
 	m_Mutex.Release();
 
 	if(packet == 0)
 	{
+		//累计连续空包次数
 		m_DontHaveAPacketSince++;
 	}
 	else
 	{
+		//遇到有效包,次数清零
 		m_DontHaveAPacketSince = 0;
 	}
-
+	//Slience函数通过RTPHeader检查包是否静音包
 	if((packet != 0 && packet->Silence()) || m_Silence)
 	{
 		m_AveragePacketsInBuffer = (float)packetsInBuffer;
@@ -186,6 +191,7 @@ float JitterBuffer::AveragePacketsInBuffer()
 	return m_AveragePacketsInBuffer;
 }
 
+//检查buffer 有多少个包
 unsigned int JitterBuffer::PacketsInBuffer()
 {
 	unsigned int packets = 0;
@@ -194,6 +200,7 @@ unsigned int JitterBuffer::PacketsInBuffer()
 		int firstSeq = m_Packets[m_Anfang]->SequenceNumber();
 		for(; packets < s_MaxElems; packets++)
 		{
+			//当当前播放的下一条数据为空,或者是包序号比当前包小,则认为后续包无效,返回的包条数总数到此为止
 			if (m_Packets[(m_Anfang + packets) % s_MaxElems] == 0
 				|| m_Packets[(m_Anfang + packets) % s_MaxElems]->SequenceNumber() < firstSeq)
 			{

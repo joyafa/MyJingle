@@ -102,8 +102,8 @@ void SoundPlayImpl::Init()
 		m_PacketsInBuffer = m_Audiodev->PacketsInBuffer();
 		m_Buffer = m_Audiodev->PlayBuffer();
 		m_PlayDevice = m_Audiodev->PlayDevice();
-		m_BytesInPacket = m_Audiodev->BytesInPacket();
-		m_BytesPerMsec = m_Audiodev->BytesPerMsec();
+		m_BytesInPacket = m_Audiodev->BytesInPacket();//每个包字节数
+		m_BytesPerMsec = m_Audiodev->BytesPerMsec();//每毫秒多少字节 16k时候 是 32个字节
 
 		void* start = 0;
 		DWORD length = 0;
@@ -125,13 +125,13 @@ void SoundPlayImpl::Init()
 			message.strcatf(_S("While unlocking buffer Direct Sound, DirectX Error: %d"), res);
 			throw Exception(message);
 		}
-
+		//20个buffer,每个buffer'存的数据 20个20ms,也即是 400ms数据
 		m_Notifypos = new DSBPOSITIONNOTIFY[m_PacketsInBuffer];
 		m_Events = new HANDLE[m_PacketsInBuffer];
 		for(int i = 0; i < m_PacketsInBuffer; i++)
 		{
 			m_Events[i] = CreateEvent(0,0,false,0);
-			m_Notifypos[i].dwOffset = ((m_PacketsInBuffer*m_BytesInPacket) + i * m_BytesInPacket - (m_BytesPerMsec * s_mSecDecodeLatency))%(m_PacketsInBuffer*m_BytesInPacket);
+			m_Notifypos[i].dwOffset =  ((m_PacketsInBuffer*m_BytesInPacket) + i * m_BytesInPacket - (m_BytesPerMsec * s_mSecDecodeLatency))%(m_PacketsInBuffer*m_BytesInPacket);//i * m_BytesInPacket;//((m_PacketsInBuffer*m_BytesInPacket) + i * m_BytesInPacket - (m_BytesPerMsec * s_mSecDecodeLatency))%(m_PacketsInBuffer*m_BytesInPacket);
 			m_Notifypos[i].hEventNotify = m_Events[i];
 		}
 
@@ -253,22 +253,25 @@ void SoundPlayImpl::Svc()
 	//m_Mutex.Aquire();
 
 	int objIndex = res - WAIT_OBJECT_0;
+
+	beatLog_Info(("SoundPlayImpl", "Svc", "Wait for multiple Objects Index: %d", objIndex));
+
 	if(m_InitialBufferRun)
 	{
-		//beatLog_Error(("SoundPlayImpl", "Svc", "Wait for multiple Objects failed: %d", objIndex));
+		beatLog_Error(("SoundPlayImpl", "Svc", "Wait for multiple Objects failed: %d", objIndex));
 		if(objIndex == 0) m_InitialBufferRun = false;
 	}
 
 	if(!m_InitialBufferRun && m_JitterBuffer && !m_Stop && m_Playing)
 	{
-		long freq;
-		Packet* packet = m_JitterBuffer->GetPacket(&freq, m_Format.nSamplesPerSec);
 		int offset = m_BytesInPacket * objIndex;
 		int length = m_BytesInPacket;
 		void* start1 = 0;
 		void* start2 = 0;
 		DWORD length1 = 0;
 		DWORD length2 = 0;
+
+		beatLog_Info(("SoundPlayImpl", "Svc", "Wait for multiple copydata: %d %d %d ", objIndex,offset,length));
 
 		res = m_Buffer->Lock(offset,length,&start1, &length1, &start2, &length2,0);
 		if (!SUCCEEDED(res))
@@ -279,7 +282,9 @@ void SoundPlayImpl::Svc()
 		{
 			throw Exception(_S("SoundPlayImpl::Svc() Buffer does wrap! TSNH!!!!!"));
 		}
-
+		
+		long freq;
+		Packet* packet = m_JitterBuffer->GetPacket(&freq, m_Format.nSamplesPerSec);
 		length = DecompressPacket(packet, (char*)start1, length1);
 		if(length != length1)
 		{
@@ -294,6 +299,10 @@ void SoundPlayImpl::Svc()
 
 		if(m_JitterBuffer != 0)
 		{
+			//设置声音频率
+			beatLog_Info(("SoundPlayImpl", "Svc", "Set Frequency to buffer DirectX freq: %d", freq));
+			//freq = 16000;
+			//TODO:这个值严重影响声音效果,写死跟采集端一致,声音最起码好多了,解析处理的值, 会在一个范围内变动,非完全一致
 			m_Buffer->SetFrequency(freq);
 			if (!SUCCEEDED(res))
 			{

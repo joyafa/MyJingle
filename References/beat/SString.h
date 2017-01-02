@@ -28,6 +28,7 @@
 #endif // _MSC_VER > 1000
 
 #include "SSystem.h"
+#include <vector>
 
 class SString
 {
@@ -109,6 +110,7 @@ protected:
 SString operator+(SString& a, SString& b);
 SString operator+(SString& a, SCHAR* b);
 
+bool UnicodeToMultiBytes(std::vector<char>& pmb, const wchar_t * pun, int uLen);
 // ============================================================================
 
 template <class T, int N> class SFlexBufT
