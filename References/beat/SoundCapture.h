@@ -40,7 +40,6 @@
 #include "Dsound.h"
 #include "Thread.h"
 #include "SoundInterface.h"
-#include "SoundRecorder.h"
 #endif
 
 

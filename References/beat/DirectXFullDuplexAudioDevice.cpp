@@ -126,9 +126,6 @@ void DirectXFullDuplexAudioDevice::Init()
 				throw Exception(message);
 			}
 		}
-		DWORD dwFrequency = 0.0;
-		m_PlayBuffer->GetFrequency(&dwFrequency);
-		beatLog_Info(("DirectXFullDuplexAudioDevice", "Init", "m_PlayBuffer->GetFrequency: %d", dwFrequency));
 	}
 	m_Usage++;
 }
