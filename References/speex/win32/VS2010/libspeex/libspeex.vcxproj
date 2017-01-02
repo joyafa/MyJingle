@@ -83,7 +83,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -189,11 +189,11 @@
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Lib>
-      <OutputFile>../../../lib/libspeex.lib</OutputFile>
+      <OutputFile>../../../bin/libspeexD.lib</OutputFile>
     </Lib>
     <PostBuildEvent>
-      <Command>copy /Y $(OutDir)$(TargetName)$(TargetExt) ..\..\..\bin\libspeex.dll
-copy /Y $(OutDir)$(TargetName).lib ..\..\..\bin\libspeex.lib</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <Link>
       <ModuleDefinitionFile>..\..\libspeex.def</ModuleDefinitionFile>
@@ -222,6 +222,9 @@ copy /Y $(OutDir)$(TargetName).lib ..\..\..\bin\libspeex.lib</Command>
     <Lib>
       <OutputFile>$(OutDir)libspeex.lib</OutputFile>
     </Lib>
+    <PostBuildEvent>
+      <Command>copy /Y $(OutDir)$(TargetName).lib ..\..\..\bin\libspeex.lib</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_SSE|Win32'">
     <ClCompile>

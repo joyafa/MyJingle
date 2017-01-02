@@ -53,11 +53,14 @@ public:
 	void Exit();
 	void AddPacket(Packet* packet, NetAddress* address);
 	Packet* GetPacket(long* frequency, long origFrequency);
-	Packet* GetPacket();
+	Packet* GetPacket(long* frequency, int nFrames, int nLength);
 	float AveragePacketsInBuffer();
 	unsigned int PacketsInBuffer();
+
+	void AddPacket(Packet* packet);
+
 protected:
-	const static unsigned int s_MaxElems = 10000;
+	const static unsigned int s_MaxElems = 3000;//40;//TODO:这个20是否可以调大??
 	Packet* m_Packets[s_MaxElems];
 	int m_Anfang;
 	int m_Ende;
@@ -70,6 +73,7 @@ protected:
 	JitterStrategy m_JitterStrategy;
 	const static unsigned int s_DetectSilencePacketCount = 10;
 	bool m_Silence;
-	int m_nIndex;
+	int m_nPackets;
 };
-#endif
+
+#endif

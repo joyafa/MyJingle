@@ -53,13 +53,28 @@ bool Serializer::Serialize( const char  *pVoid, int nLength )
 	//数据个数: 长度 +　数据块　
 
 	//写长度
-	//m_fout.write((char *)&nLength, 4);
+	m_fout.write((char *)&nLength, 4);
 	//写数据
 	m_fout.write((char *)pVoid, nLength);
 	
 	return true;
 }
 
+
+bool Serializer::SerializeRW( const char *pVoid, int nLength )
+{
+	if (!m_fout.is_open())
+	{
+		//将快条数和每块长度读取出来
+		m_fout.open(m_strFileName.c_str(), m_nOpenMode);
+		if (!IsGood())
+		{
+			//TRACE("file is not opened !!");
+			return false;
+		}
+	}
+	m_fout.write((char *)pVoid, nLength);
+}
 
 int Serializer::ObjectsInFile()
 {
@@ -91,6 +106,8 @@ int Serializer::ObjectsInFile()
 	return nObjects;
 }
 
+
+
 bool Serializer::Deserialize(void **ppOut, int *pnLength, int nIndex)
 {
 	if (!m_fin.is_open())
@@ -104,7 +121,7 @@ bool Serializer::Deserialize(void **ppOut, int *pnLength, int nIndex)
 	}
 
 	//读四个字节长度
-	m_fin.read((char *)pnLength, 4);
+	*pnLength = 640;
 	*ppOut = new char[sizeof(Packet)];
 	memset(*ppOut, 0, sizeof(Packet));
 
@@ -112,7 +129,7 @@ bool Serializer::Deserialize(void **ppOut, int *pnLength, int nIndex)
 	unsigned char *pData = new unsigned char[*pnLength];
 	//读取数据
 	m_fin.read((char *)pData, *pnLength);
-	
+
 	//存内存的地址
 	*(unsigned int *)(*ppOut) = (unsigned int)pData;
 	//存长度
@@ -120,6 +137,7 @@ bool Serializer::Deserialize(void **ppOut, int *pnLength, int nIndex)
 
 	return true;
 }
+
 
 //获取文件长度
 int Serializer::GetFileLength()

@@ -26,6 +26,7 @@
 /* after the user calls timeKillEvent() to */
 /* destroy it. */
 
+
 TimeValue::TimeValue(void):
 m_Microseconds(0)
 {

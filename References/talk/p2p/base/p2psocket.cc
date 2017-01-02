@@ -436,9 +436,10 @@ void P2PSocket::RememberRemoteCandidate(const Candidate& remote_candidate,
   uint32 i = 0;
   while (i < remote_candidates_.size()) {
     if (remote_candidates_[i].generation() < remote_candidate.generation()) {
-      remote_candidates_.erase(remote_candidates_.begin() + i);
+      
       LOG(INFO) << "Pruning candidate from old generation: "
                 << remote_candidates_[i].address().ToString();
+	  remote_candidates_.erase(remote_candidates_.begin() + i);
 
     } else {
       i += 1;

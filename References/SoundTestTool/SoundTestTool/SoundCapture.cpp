@@ -21,42 +21,52 @@
 //----------------------------------------------------------------------//
 
 #include "SoundCapture.h"
+
 SoundCapture::SoundCapture(void):
-//m_NetAddress(0)
-m_nSeq(0)
+m_NetAddress(0)
+,m_nSeq(0)
 ,m_FrameSize(-1)
-//,m_Encoder(0)
+,m_Encoder(0)
+,m_SoundSerializer(_S("TestRecord.pcm"))
 {
+}
+
+SoundCapture::SoundCapture( SCHAR *pRecordFilePath ): 
+    m_SoundSerializer(pRecordFilePath)
+	, m_NetAddress(0)
+	,m_nSeq(0)
+	,m_FrameSize(-1)
+	,m_Encoder(0){
+
 }
 
 SoundCapture::~SoundCapture(void)
 {
 }
 
-//Codec* SoundCapture::Encoder()
-//{
-//	return m_Encoder;
-//}
+Codec* SoundCapture::Encoder()
+{
+	return m_Encoder;
+}
 
-//void SoundCapture::Encoder(Codec* encoder)
-//{
-//	m_Encoder = encoder;
-//	if(m_Encoder!=0)
-//	{
-//		m_FrameSize = m_Encoder->GetCompressFrameSize();
-//	}
-//}
+void SoundCapture::Encoder(Codec* encoder)
+{
+	m_Encoder = encoder;
+	if(m_Encoder!=0)
+	{
+		m_FrameSize = m_Encoder->GetCompressFrameSize();
+	}
+}
 
-//NetAddress* SoundCapture::ToNetAddress()
-//{
-//	return m_NetAddress;
-//}
-//
-//void SoundCapture::ToNetAddress(NetAddress* netaddress)
-//{
-//	m_NetAddress = netaddress;
-//}
-//
+NetAddress* SoundCapture::ToNetAddress()
+{
+	return m_NetAddress;
+}
+
+void SoundCapture::ToNetAddress(NetAddress* netaddress)
+{
+	m_NetAddress = netaddress;
+}
 
 Packet* SoundCapture::CompressFrame(char* frame, int length)
 {
@@ -65,10 +75,33 @@ Packet* SoundCapture::CompressFrame(char* frame, int length)
 	return packet;
 }
 
+//void SoundCapture::CompressFrame(char* frame, int length)
+//{
+//	if(m_Encoder!=0)
+//	{
+//		m_nSeq++;
+//		Packet* pack = m_Encoder->CompressFrame(frame, length);
+//		if(pack != 0)
+//		{
+//			TimeValue timeValue;
+//			pack->SequenceNumber(m_nSeq);
+//
+//			unsigned long val = timeValue.Now().Microseconds();
+//			val /= 100;
+//
+//			pack->Timestamp(val);
+//			///speex处理后的数据写入到文件中
+//			//m_SoundSerializer.AddPacket(pack);
+//
+//			SendPacketToReceivers(pack, m_NetAddress);
+//		}
+//	}
+//}
+
 // ========================================== SoundCaptureImpl Windows =======================================
 #if defined (WIN32)
 
-SoundCaptureImpl::SoundCaptureImpl(WAVEFORMATEX& format, HWND window):
+SoundCaptureImpl::SoundCaptureImpl(WAVEFORMATEX& format, HWND window, SCHAR *pFilePath):
 m_Initialized(false)
 ,m_Audiodev(0)
 ,m_Events(0)
@@ -80,7 +113,7 @@ m_Initialized(false)
 ,m_Capturing(false)
 ,m_PrioritySet(false)
 ,m_Notifypos(0)
-,m_SoundSerializer(_S("TestRecord.pcm"))
+, SoundCapture(pFilePath)
 {
 }
 
@@ -98,7 +131,7 @@ void SoundCaptureImpl::Init()
 		m_Audiodev = GetDirectXFullDuplexAudioDeviceInstance(m_Format, m_Window);
 		m_Audiodev->Init();
 
-		m_PacketsInBuffer = m_Audiodev->PacketsInBuffer();
+		m_PacketsInBuffer = m_Audiodev->PacketsInBuffer();//40个包
 		m_CaptureBuffer = m_Audiodev->CaptureBuffer();
 		m_CaptureDevice = m_Audiodev->CaptureDevice();
 		m_BytesInPacket = m_Audiodev->BytesInPacket();
@@ -108,6 +141,7 @@ void SoundCaptureImpl::Init()
 		m_Events = new HANDLE[m_PacketsInBuffer];
 		for(int i = 0; i < m_PacketsInBuffer; i++)
 		{
+			//autoreset, false  自动的,初始化为无信号
 			m_Events[i] = CreateEvent(0,0,false,0);
 			m_Notifypos[i].dwOffset = i * m_BytesInPacket;
 			m_Notifypos[i].hEventNotify = m_Events[i];
@@ -201,11 +235,14 @@ void SoundCaptureImpl::Svc()
 	}
 
 	int objIndex = res - WAIT_OBJECT_0;
+	beatLog_Info(("SoundPlayImpl", "Svc", "m_Events[%d] have single", objIndex));
 
 	if(!m_Stop && m_Capturing)
 	{
 		int offset = m_PacketsInBuffer * m_BytesInPacket - m_BytesInPacket + objIndex * m_BytesInPacket;
 		offset = offset % (m_BytesInPacket * m_PacketsInBuffer);
+		beatLog_Info(("SoundPlayImpl1", "Svc", "offset = %d ", offset));
+
 		int length = m_BytesInPacket;
 		void* start1 = 0;
 		void* start2 = 0;
@@ -228,9 +265,10 @@ void SoundCaptureImpl::Svc()
 			throw Exception(_S("SoundCaptureImpl::Svc() Buffer does wrap! TSNH!!!!!"));
 		}
 
-		//记录到文件中
-		Packet *packet = CompressFrame((char*)start1, length1);
-		m_SoundSerializer.AddPacket(packet);
+		//TODO:记录到文件中
+		//Packet *packet = CompressFrame((char*)start1, length1);
+		//将声卡取到的原始数据写入到文件中,不包含头信息
+		m_SoundSerializer.AddRwdata((char*)start1, length1);
 
 		m_CaptureBuffer->Unlock(start1,length1,start2,length2);
 		if (!SUCCEEDED(res))

@@ -85,9 +85,9 @@
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libspeex.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libspeexD.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../../bin/testenc_uwb.exe</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)speexenc.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>

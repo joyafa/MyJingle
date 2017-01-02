@@ -13,6 +13,7 @@ public:
 	}
 
 	bool Serialize(const char *pVoid, int nLength);
+	bool SerializeRW(const char *pVoid, int nLength);
 
 	int ObjectsInFile();
 	bool Deserialize(void **ppOut, int *pnLength, int nIndex);

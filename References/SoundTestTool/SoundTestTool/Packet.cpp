@@ -126,6 +126,24 @@ const char* Packet::Data() const
 	return RwData();
 }
 
+char* Packet::RwData() const
+{
+	int headerSize=0;
+	char* data = (char *)(m_Packet);
+	if(IsData())
+	{
+		headerSize = GetDataPacketHeaderSize();
+	}
+	if(IsCommand())
+	{
+		headerSize = GetCommandPacketHeaderSize();
+	}
+	unsigned char contCount = ContributorsCount();
+	data += contCount * 4;
+	data += headerSize;
+	return data;
+}
+
 int Packet::RwDataLength() const
 {
 	int headerSize=0;
@@ -142,25 +160,6 @@ int Packet::RwDataLength() const
 	return m_BufLen - headerSize;
 }
 
-char* Packet::RwData() const
-{
-	int headerSize=0;
-	char* data = (char *)(m_Packet);
-#if 0
-	if(IsData())
-	{
-		headerSize = GetDataPacketHeaderSize();
-	}
-	if(IsCommand())
-	{
-		headerSize = GetCommandPacketHeaderSize();
-	}
-	unsigned char contCount = ContributorsCount();
-	data += contCount * 4;
-	data += headerSize;
-#endif
-	return data;
-}
 
 int Packet::PacketLength() const
 {
@@ -367,6 +366,17 @@ Packet* Packet::TmpGetPacketFromBuffer(char* buffer, int length)
 	return new Packet(buffer, length);
 }
 
+
+Packet* Packet::GetPacketFromBuffer( char* buffer, int length )
+{
+	if (NULL == buffer || 0 == length)
+	{
+		return NULL;
+	}
+	char *pBuffer = new char[length];
+	memcpy(pBuffer, buffer, length);
+	return TmpGetPacketFromBuffer(pBuffer, length);
+}
 
 int Packet::GetPacketsFromBuffer(char* buffer, int length, Packet** packets, int packetsCount)
 {

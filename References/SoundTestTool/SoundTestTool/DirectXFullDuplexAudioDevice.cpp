@@ -126,7 +126,7 @@ void DirectXFullDuplexAudioDevice::Init()
 
 		ZeroMemory(&m_BufferDesc, sizeof(DSCBUFFERDESC));
 		m_BufferDesc.dwSize = sizeof(DSCBUFFERDESC);
-		m_BufferDesc.dwBufferBytes = s_PacketsInBuffer * BytesInPacket();
+		m_BufferDesc.dwBufferBytes = s_PacketsInBuffer * BytesInPacket();//1个包是20ms的数据,  40*20=800ms
 		m_BufferDesc.dwReserved = 0;
 		m_BufferDesc.lpwfxFormat = &m_Format;
 		m_BufferDesc.dwFlags = DSCBCAPS_CTRLFX;
@@ -136,6 +136,7 @@ void DirectXFullDuplexAudioDevice::Init()
 		ZeroMemory(&m_PlayBufferDesc, sizeof(DSBUFFERDESC));
 		m_PlayBufferDesc.dwSize = sizeof(DSBUFFERDESC);
 		m_PlayBufferDesc.dwBufferBytes = s_PacketsInBuffer * BytesInPacket();
+		//DSBCAPS_GLOBALFOCUS 标志位保证当程序窗口不在前面时仍能够播放，没有这个标志位，当其它程序或者对话框拥有焦点的时候缓冲区会静音
 		m_PlayBufferDesc.dwFlags = DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_CTRLFREQUENCY | DSBCAPS_GETCURRENTPOSITION2;
 		m_PlayBufferDesc.dwReserved = 0;
 		m_PlayBufferDesc.lpwfxFormat = &m_Format;
@@ -239,7 +240,7 @@ int DirectXFullDuplexAudioDevice::BytesInPacket()
 {
 	if (m_BytesInPacket == -1)
 	{
-		m_BytesInPacket = m_Format.nAvgBytesPerSec/50;
+		m_BytesInPacket = m_Format.nAvgBytesPerSec/50 * 10;
 	}
 	return m_BytesInPacket;
 }

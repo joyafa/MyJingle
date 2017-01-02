@@ -85,9 +85,9 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>Ws2_32.lib;Secur32.lib;iphlpapi.lib;libexpat.lib;libexpatw.lib;Kernel32.lib;Crypt32.lib;winmm.lib;Dsound.lib;../References/speex/bin/libspeex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Ws2_32.lib;Secur32.lib;iphlpapi.lib;libexpat.lib;libexpatw.lib;Kernel32.lib;Crypt32.lib;winmm.lib;Dsound.lib;libspeexD.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>../References/Expat-1.95.8/Libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../References/Expat-1.95.8/Libs;../References/speex/bin/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -103,7 +103,7 @@
       <ValidateAllParameters>false</ValidateAllParameters>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>./;../References/Expat-1.95.8/Source/lib;../References/speex-1.1.11.1/include;../References;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../References/Expat-1.95.8/Source/lib;../References/speex/include;../References;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -118,8 +118,8 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>Ws2_32.lib;Secur32.lib;iphlpapi.lib;libexpat.lib;libexpatw.lib;Kernel32.lib;Crypt32.lib;winmm.lib;Dsound.lib;../References/speex-1.1.11.1/win32/libspeex/Release/libspeex.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../References/Expat-1.95.8/Libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Ws2_32.lib;Secur32.lib;iphlpapi.lib;libexpat.lib;libexpatw.lib;Kernel32.lib;Crypt32.lib;winmm.lib;Dsound.lib;libspeex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../References/Expat-1.95.8/Libs;../References/speex/bin/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -139,8 +139,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\References\beat\Codec.h" />
-    <ClInclude Include="..\References\beat\Serializer.h" />
-    <ClInclude Include="..\References\beat\SoundRecorder.h" />
     <ClInclude Include="presenceouttask.h" />
     <ClInclude Include="presencepushtask.h" />
     <ClInclude Include="BeatMediaChannel.h" />
@@ -171,11 +169,9 @@
     <ClCompile Include="..\References\beat\NetAddress.cpp" />
     <ClCompile Include="..\References\beat\Packet.cpp" />
     <ClCompile Include="..\References\beat\SElem.cpp" />
-    <ClCompile Include="..\References\beat\Serializer.cpp" />
     <ClCompile Include="..\References\beat\SoundCapture.cpp" />
     <ClCompile Include="..\References\beat\SoundInterface.cpp" />
     <ClCompile Include="..\References\beat\SoundPlay.cpp" />
-    <ClCompile Include="..\References\beat\SoundRecorder.cpp" />
     <ClCompile Include="..\References\beat\SString.cpp" />
     <ClCompile Include="..\References\beat\Thread.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>

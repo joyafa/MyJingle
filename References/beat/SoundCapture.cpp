@@ -74,6 +74,7 @@ void SoundCapture::CompressFrame(char* frame, int length)
 			val /= 100;
 
 			pack->Timestamp(val);
+			//TODO:写入到文件中
 
 			SendPacketToReceivers(pack, m_NetAddress);
 		}

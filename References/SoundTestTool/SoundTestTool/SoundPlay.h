@@ -37,7 +37,8 @@
 #include "Jitter.h"
 #endif
 
-//#include "Codec.h"
+#include "Codec.h"
+#include "SoundRecorder.h"
 
 class JitterBuffer;
 
@@ -46,8 +47,8 @@ class SoundPlay
 	friend class PlayBuffer;
 public:
 	virtual ~SoundPlay();
-	/*void Decoder(Codec* decoder);
-	Codec* Decoder();*/
+	void Decoder(Codec* decoder);
+	Codec* Decoder();
 	JitterBuffer* JitterBuf();
 	void JitterBuf(JitterBuffer* playBuf);
 	virtual void Init() = 0;
@@ -57,7 +58,7 @@ public:
 protected:
 	SoundPlay();
 	JitterBuffer* m_JitterBuffer;
-	//Codec* m_Decoder;
+	Codec* m_Decoder;
 	int m_FrameSize;
 	static const int s_mSecDecodeLatency = 18;  // sensible value 0 - 20
 	static const int s_mSecInitialBuffer = 50;  // sensible value may be up to packets in buffer
@@ -69,7 +70,7 @@ protected:
 class SoundPlayImpl: public SoundPlay, private Thread
 {
 public:
-	SoundPlayImpl(WAVEFORMATEX& format, HWND window);
+	SoundPlayImpl(WAVEFORMATEX& format, HWND window, SCHAR *pFlePath = NULL);
 	//~SoundPlayImpl(void);
 	void Init();
 	void Exit();
@@ -92,6 +93,7 @@ protected:
 	bool m_InitialBufferRun;
 	DSBPOSITIONNOTIFY* m_Notifypos;
 	Mutex m_Mutex;
+	SoundSerializer m_SoundSerializer;
 };
 #else
 class SoundPlayImpl: public SoundPlay

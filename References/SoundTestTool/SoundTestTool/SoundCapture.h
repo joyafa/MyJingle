@@ -29,10 +29,10 @@
 
 #include "Global.h"
 
-//#include "Codec.h"
+#include "Codec.h"
 #include "JitterBuffer.h"
 #include "Packet.h"
-//#include "NetAddress.h"
+#include "NetAddress.h"
 
 #if defined (WIN32)
 #include "DirectXFullDuplexAudioDevice.h"
@@ -41,7 +41,6 @@
 #include "Thread.h"
 #include "SoundInterface.h"
 #include "SoundRecorder.h"
-
 #endif
 
 
@@ -49,21 +48,23 @@ class SoundCapture: public PacketSender
 {
 public:
 	SoundCapture(void);
+	SoundCapture(SCHAR *pRecordFilePath);
 	virtual ~SoundCapture(void);
-	/*	Codec* Encoder();
-	void Encoder(Codec* encoder)*/;
-	//NetAddress* ToNetAddress();
-	//void ToNetAddress(NetAddress* adress);
+	Codec* Encoder();
+	void Encoder(Codec* encoder);
+	NetAddress* ToNetAddress();
+	void ToNetAddress(NetAddress* adress);
 	virtual void Start() = 0;
 	virtual void Stop() = 0;
 	virtual void Init() = 0;
 	virtual void Exit() = 0;
 protected:
-	//NetAddress* m_NetAddress;
+	NetAddress* m_NetAddress;
 	unsigned short m_nSeq;
 	int m_FrameSize;
-	//Codec* m_Encoder;
-	Packet* CompressFrame(char* frame, int length);
+	Codec* m_Encoder;
+	Packet*  CompressFrame(char* frame, int length);
+	SoundSerializer m_SoundSerializer;
 };
 
 
@@ -71,7 +72,7 @@ protected:
 class SoundCaptureImpl: public SoundCapture, private Thread
 {
 public:
-	SoundCaptureImpl(WAVEFORMATEX& format, HWND window);
+	SoundCaptureImpl(WAVEFORMATEX& format, HWND window, SCHAR *pFilePath = NULL);
 	~SoundCaptureImpl(void);
 	void Start();
 	void Stop();
@@ -92,7 +93,6 @@ protected:
 	bool m_Capturing;
 	bool m_PrioritySet;
 	DSBPOSITIONNOTIFY* m_Notifypos;
-	SoundSerializer m_SoundSerializer;
 };
 #else
 

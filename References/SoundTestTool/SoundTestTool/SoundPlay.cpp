@@ -25,7 +25,7 @@
 
 SoundPlay::SoundPlay():
 m_JitterBuffer(0)
-//,m_Decoder(0)
+,m_Decoder(0)
 ,m_FrameSize(0)
 {
 }
@@ -34,19 +34,19 @@ SoundPlay::~SoundPlay(void)
 {
 }
 
-//Codec* SoundPlay::Decoder()
-//{
-//	return m_Decoder;
-//}
-//
-//void SoundPlay::Decoder(Codec* decoder)
-//{
-//	m_Decoder = decoder;
-//	if(m_Decoder!=0)
-//	{
-//		m_FrameSize = m_Decoder->GetDecompressFrameSize();
-//	}
-//}
+Codec* SoundPlay::Decoder()
+{
+	return m_Decoder;
+}
+
+void SoundPlay::Decoder(Codec* decoder)
+{
+	m_Decoder = decoder;
+	if(m_Decoder!=0)
+	{
+		m_FrameSize = m_Decoder->GetDecompressFrameSize();
+	}
+}
 
 JitterBuffer* SoundPlay::JitterBuf()
 {
@@ -60,20 +60,28 @@ void SoundPlay::JitterBuf(JitterBuffer* jitterBuf)
 
 int SoundPlay::DecompressPacket(Packet* packet, char* outFrame, int length)
 {
+#ifdef _DEBUG
+	if (NULL == packet) return 0;
+	if (packet->GetTestData())
+		{
+			memcpy(outFrame, packet->GetTestData(), length);
+	}
+	return length;
+#else
 	int decompLength = 0;
-	memcpy(outFrame, packet->RwData(), length);
-	/*if(m_Decoder!=0)
+	if(m_Decoder!=0)
 	{
 		decompLength = m_Decoder->DecompressPacket(packet, outFrame, length);
 	}
-*/
 	return decompLength;
+
+#endif
 }
 
 // ========================================== SoundPlayImpl Windows =======================================
 #if defined (WIN32)
 
-SoundPlayImpl::SoundPlayImpl(WAVEFORMATEX& format, HWND window):
+SoundPlayImpl::SoundPlayImpl(WAVEFORMATEX& format, HWND window, SCHAR *pFlePath):
 m_Playing(false)
 ,m_Initialized(false)
 ,m_Audiodev(0)
@@ -85,6 +93,7 @@ m_Playing(false)
 ,m_BytesPerMsec(-1)
 ,m_InitialBufferRun(true)
 ,m_Notifypos(0)
+, m_SoundSerializer(_S("RestorData.pcm"))
 {
 	memcpy(&m_Format, &format, sizeof(WAVEFORMATEX));
 }
@@ -264,14 +273,10 @@ void SoundPlayImpl::Svc()
 	if(!m_InitialBufferRun && m_JitterBuffer && !m_Stop && m_Playing)
 	{
 		long freq;
-		Packet* packet = m_JitterBuffer->GetPacket();
-       if (packet == NULL)
-	   {
-		   Stop();
-		   MessageBox(NULL, _S("²¥·ÅÍê±Ï"), _S("OK"), MB_NOFOCUS);
-	   }
-		int offset = m_BytesInPacket * objIndex;
+		//Packet* packet = m_JitterBuffer->GetPacket(&freq, m_Format.nSamplesPerSec);
 		int length = m_BytesInPacket;
+		Packet* packet = m_JitterBuffer->GetPacket(&freq, 10, m_BytesInPacket/10);
+		int offset = m_BytesInPacket * objIndex;
 		void* start1 = 0;
 		void* start2 = 0;
 		DWORD length1 = 0;
@@ -292,22 +297,22 @@ void SoundPlayImpl::Svc()
 		{
 			beatLog_Error(("SoundPlayImpl", "Svc", "More bytes written than locked !!!!"));
 		}
-
+		//m_SoundSerializer.AddRwdata((char*)start1, length1);
 		m_Buffer->Unlock(start1,length1,start2,length2);
 		if (!SUCCEEDED(res))
 		{
 			beatLog_Error(("SoundPlayImpl", "Svc", "Can not unlock buffer DirectX error: %d", res));
 		}
 
-		/*if(m_JitterBuffer != 0)
+		if(m_JitterBuffer != 0)
 		{
 			m_Buffer->SetFrequency(freq);
 			if (!SUCCEEDED(res))
 			{
 				beatLog_Error(("SoundPlayImpl", "Svc", "Can not set Frequency to buffer DirectX error: %d", res));
 			}
-		}*/
-
+		}
+		m_Buffer->Restore();
 		if(packet)
 		{
 			delete packet;

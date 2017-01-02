@@ -63,7 +63,6 @@ protected:
 	int m_FrameSize;
 	Codec* m_Encoder;
 	void CompressFrame(char* frame, int length);
-	SoundSerializer m_SoundSerializer;
 };
 
 

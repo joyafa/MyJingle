@@ -41,14 +41,12 @@
 #endif
 
 #include "Exception.h"
-//#include "beatLog_.h"
+#include "beatLog_.h"
 
 #ifdef DIRECTSOUND_VERSION
 #undef DIRECTSOUND_VERSION
 #endif
-#define beatLog_Debug 
 
-#define beatLog_Error
 #define DIRECTSOUND_VERSION 0x0800  /* Version 8.0 */
 class Global
 {

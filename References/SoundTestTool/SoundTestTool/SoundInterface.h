@@ -29,12 +29,8 @@
 
 #include "Global.h"
 #include "Packet.h"
-//#include "NetAddress.h"
-//#include "MyTime.h"
-class NetAddress
-{
-
-};
+#include "NetAddress.h"
+#include "MyTime.h"
 
 class PacketReciever
 {

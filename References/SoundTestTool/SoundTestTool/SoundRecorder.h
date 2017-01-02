@@ -37,7 +37,8 @@ class SoundSerializer : public PacketReciever
 public:
 	SoundSerializer(const SCHAR* filename);
 	~SoundSerializer(void);
-	 void AddPacket(Packet* packet, NetAddress* address = NULL);
+	void AddRwdata(char *pData, int nLength);
+	void AddPacket(Packet* packet, NetAddress* address = NULL);
 private:
 	int m_PacketsInFile;
 	Serializer m_Serializer;
@@ -64,7 +65,7 @@ public:
 		if (NULL == m_pJitterBuffer) return 0;
 		for (int i=0;i<m_PacketsCount;++i)
 		{
-			m_pJitterBuffer->AddPacket(m_Packets[i], NULL);
+			m_pJitterBuffer->AddPacket(m_Packets[i]);
 		}
 
 		return m_PacketsCount;

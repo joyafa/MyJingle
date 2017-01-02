@@ -23,7 +23,6 @@
 #include "JitterBuffer.h"
 #include "SoundPlay.h"
 
-
 BufferElem::BufferElem(void):
 Packet(0)
 ,Length(0)
@@ -41,7 +40,7 @@ m_Anfang(0)
 ,m_DontHaveAPacketSince(0)
 ,m_AveragePacketsInBuffer(1)
 ,m_Silence(true)
-,m_nIndex(0)
+,m_nPackets(0)
 {
 	m_Mutex.Init();
 	for(unsigned int i = 0; i < s_MaxElems; i++)
@@ -67,13 +66,9 @@ void JitterBuffer::Exit()
 void JitterBuffer::AddPacket(Packet* packet, NetAddress* address)
 {
 	// TODO: case nSeq wraps
-	static int index =0;
 	if (packet != 0)
 	{
 		m_Mutex.Aquire();
-		m_Packets[index++] = packet;
-		m_Mutex.Release();
-		return; 
 		unsigned int offset = 0;
 		if(m_Packets[m_Anfang] != 0)
 		{
@@ -106,16 +101,40 @@ void JitterBuffer::AddPacket(Packet* packet, NetAddress* address)
 	PlayStart();
 }
 
-Packet* JitterBuffer::GetPacket()
+void JitterBuffer::AddPacket( Packet* packet )
 {
-	SString ss;
-	ss.strcatf(_S("GetPacket: 取 第 %d 帧声音数据\n"), m_nIndex);
-	OutputDebugString(ss);
-	if (m_nIndex < s_MaxElems)
+	static int indx = 0;
+	if (packet != 0)
 	{
-		return m_Packets[m_nIndex++];
+		m_Mutex.Aquire();
+		m_Packets[indx++] = packet;
+		m_Mutex.Release();
 	}
-	return NULL;
+	m_nPackets++;
+}
+
+
+Packet* JitterBuffer::GetPacket(long* frequency, int nFrames, int nLength)
+{
+	static int nIndex = 0;
+	if (nIndex >= m_nPackets)nIndex = 0;
+	m_Mutex.Aquire();
+
+	beatLog_Info(("JitterBuffer", "GetPacket", "nIndex = %d ", nIndex));
+	char *buf = new char[nFrames * nLength];
+	for(int i=0;i<nFrames;i++)
+	{
+		if (nIndex >= m_nPackets)nIndex = 0;
+		Packet *packet = m_Packets[nIndex++];
+		memcpy(&buf[i * nLength], packet->GetTestData(), nLength);
+		//delete packet;
+	}
+	Packet* packet = Packet::TmpGetPacketFromBuffer(buf, nFrames * nLength);
+	m_Mutex.Release();
+
+	*frequency = 16000;//m_JitterStrategy.FrequenzFactor(m_AveragePacketsInBuffer, origFrequency);
+
+	return packet;
 }
 
 Packet* JitterBuffer::GetPacket(long* frequency, long origFrequency)
@@ -206,6 +225,7 @@ float JitterBuffer::AveragePacketsInBuffer()
 
 unsigned int JitterBuffer::PacketsInBuffer()
 {
+	return m_nPackets;
 	unsigned int packets = 0;
 	if(m_Packets[m_Anfang] != 0)
 	{

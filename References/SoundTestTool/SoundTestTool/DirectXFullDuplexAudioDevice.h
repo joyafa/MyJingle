@@ -58,7 +58,7 @@ private:
 	LPDIRECTSOUNDCAPTUREBUFFER8 m_CaptureBuffer;
 	LPDIRECTSOUND8 m_PlayDevice;
 	LPDIRECTSOUNDBUFFER8 m_PlayBuffer;
-	static const int s_PacketsInBuffer = 10;
+	static const int s_PacketsInBuffer =40;//40个包发送一次 TODO:10====>40
 	int m_BytesInPacket;
 	int m_BytesPerMsec;
 	DSCEFFECTDESC m_Effects[2];

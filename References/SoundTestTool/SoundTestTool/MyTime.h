@@ -35,7 +35,7 @@
 #else
 #include "sys/time.h"
 #endif
-#define beatLog_Fatal
+
 #include <mmsystem.h>
 typedef void (*CallbackFunc)(void* instance);
 typedef void (*CallbackFuncArg)(void* instance, void* arg);

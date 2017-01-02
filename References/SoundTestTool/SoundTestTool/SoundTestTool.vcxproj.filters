@@ -85,6 +85,24 @@
     <ClInclude Include="Thread.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="beat.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="beatLog_.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Codec.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="NetAddress.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeexEC.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionEdit.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SoundTestTool.cpp">
@@ -139,6 +157,21 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Thread.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="beatLog_.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Codec.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="NetAddress.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SpeexEC.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionEdit.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

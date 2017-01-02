@@ -32,17 +32,31 @@ m_Serializer(filename)
 
 SoundSerializer::~SoundSerializer(void)
 {
-	m_Serializer.Serialize((const char *)&m_PacketsInFile, sizeof(int));
+	m_Serializer.Serialize((char *)&m_PacketsInFile, sizeof(int));
 }
+
+void SoundSerializer::AddRwdata(char *pData, int nLength)
+{
+	if (NULL == pData || nLength ==0 )return ;
+	m_Serializer.SerializeRW(pData, nLength);
+	m_PacketsInFile++;
+	extern HWND g_hWnd;
+	SendMessage(g_hWnd, WM_MSG_SEND_RECORDSTATUS, 11, reinterpret_cast<LPARAM>(&m_PacketsInFile));
+
+	SString ss;
+	ss.strcatf(_S("记录声音条数: %d \n"),m_PacketsInFile);
+	OutputDebugString(ss);
+}
+
 
 void SoundSerializer::AddPacket(Packet* packet, NetAddress* address)
 {
 	if(packet != 0)
 	{
-		//m_Serializer.Serialize(packet->GetPacket(), packet->PacketLength());
+		m_Serializer.Serialize(packet->GetPacket(), packet->PacketLength());
 
 		//写入实际的数据 ,去掉头
-		m_Serializer.Serialize(packet->RwData(), packet->RwDataLength());
+		//m_Serializer.Serialize(packet->RwData(), packet->RwDataLength());
 		//m_Serializer.Serialize(address, sizeof(NetAddress));
 		m_PacketsInFile++;
 		

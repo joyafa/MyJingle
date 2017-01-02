@@ -50,12 +50,16 @@ END_MESSAGE_MAP()
 
 CSoundTestToolDlg::CSoundTestToolDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CSoundTestToolDlg::IDD, pParent)
-	, m_strPlayFilePath(_T(""))
-	, m_nAvgBytesPerSec(16000)
 	, m_nBlockAlgn(2)
 	, m_dwBitsPerSample(16)
 	, m_bPlaying(false)
-	, m_strRecordFilePath(_T(""))
+    , m_SoundCapture(NULL)
+    , m_SoundPlay(NULL)
+	, m_strPlayFilePath(_T("TestRecord.pcm"))
+	, m_strRecordFilePath(_T("TestRecord.pcm"))
+	, m_Codec_Speex()
+	, m_Codec(0)
+	, m_pCurrentSelCodec(&m_Codec)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -65,11 +69,14 @@ void CSoundTestToolDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT_PLAYPATH, m_strPlayFilePath);
 	DDX_Control(pDX, IDC_COMBO_BPS, m_cbxBps);
-	DDX_Control(pDX, IDC_COMBO_FORMAT, m_cbsFormat);
-	DDX_Text(pDX, IDC_EDIT_BYTEPS, m_nAvgBytesPerSec);
+	DDX_Control(pDX, IDC_COMBO_FORMAT, m_cbxFormat);
 	DDX_Text(pDX, IDC_EDIT_BLOCKALGN, m_nBlockAlgn);
 	DDX_Text(pDX, IDC_EDIT_BITPERSAMPLE, m_dwBitsPerSample);
 	DDX_Text(pDX, IDC_EDIT_RECORD_FILEPATH, m_strRecordFilePath);
+	DDX_Control(pDX, IDC_COMBO3, m_cbxChannels);
+	DDX_Control(pDX, IDC_EDIT_PLAYPATH, m_editPlayPath);
+	DDX_Control(pDX, IDC_EDIT_RECORD_FILEPATH, m_editRecordPath);
+	DDX_Control(pDX, IDC_COMBO_CODEC, m_cbxCodec);
 }
 
 BEGIN_MESSAGE_MAP(CSoundTestToolDlg, CDialogEx)
@@ -130,17 +137,31 @@ BOOL CSoundTestToolDlg::OnInitDialog()
 
 	InitCombxBps();
 	m_cbxBps.SetCurSel(0);
-
-	m_SoundPlay = new ::SoundPlayImpl(m_waveFormatex, m_hWnd);
-	m_SoundPlay->JitterBuf(&m_JitterBuffer);
-	m_SoundPlay->Init();
-
-	m_SoundCapture = new ::SoundCaptureImpl(m_waveFormatex, m_hWnd);
-	m_SoundCapture->Init();
-
+	InitVoiceFormat();
+	m_cbxFormat.SetCurSel(0);
+	InitChannle();
+	m_cbxChannels.SetCurSel(0);
+	InitCombxCodec();
+	m_cbxCodec.SetCurSel(0);
 	m_JitterBuffer.Init();
+	m_Codec_Speex.Init();
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
+}
+
+void  CSoundTestToolDlg::PackFormat()
+{
+	UpdateData(TRUE);
+	m_waveFormatex.wFormatTag      = WAVE_FORMAT_PCM;
+	m_waveFormatex.nChannels       = m_cbxChannels.GetCurSel() + 1;//单声道
+
+	CString str;
+	GetDlgItemText(IDC_COMBO_BPS, str);
+	m_waveFormatex.nSamplesPerSec  = _wtoi(str.GetBuffer());
+	m_waveFormatex.nAvgBytesPerSec = m_waveFormatex.nSamplesPerSec * 2;
+	m_waveFormatex.nBlockAlign     = m_nBlockAlgn;//(m_waveFormatex.nChannels*m_waveFormatex.wBitsPerSample)/8;
+	m_waveFormatex.wBitsPerSample  = m_dwBitsPerSample;
+	m_waveFormatex.cbSize          = 0;
 }
 
 void CSoundTestToolDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -193,12 +214,33 @@ HCURSOR CSoundTestToolDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+Codec *CSoundTestToolDlg::SetCodec()
+{
+	int nSel = m_cbxCodec.GetCurSel();
+	switch(nSel)
+	{
+	case 0:
+		m_pCurrentSelCodec = &m_Codec;
+		break;
+	case 1:
+		m_pCurrentSelCodec = &m_Codec_Speex;
+		break;
+	case 2:
+		m_pCurrentSelCodec = &m_Codec_G711;
+		break;
+	default:
+		m_pCurrentSelCodec = &m_Codec;
+		break;
+	}
+	
+	return m_pCurrentSelCodec;
+}
 
 void CSoundTestToolDlg::OnBnClickedBtnRecord()
 {
 	m_bPlaying = false;
 	SetDlgItemText(IDC_STATIC_STATUSTIME, _T("录音时间:"));
-
+	PackFormat();
 	CString strText;
 	GetDlgItemText(IDC_BTN_RECORD, strText);
 	if (strText == _T("开始"))
@@ -206,11 +248,14 @@ void CSoundTestToolDlg::OnBnClickedBtnRecord()
 		SetDlgItemText(IDC_BTN_RECORD, _T("停止"));
 		if (m_SoundCapture)
 		{
+			m_SoundCapture->Stop();
+			m_SoundCapture->Exit();
 			delete m_SoundCapture;
+			m_SoundCapture = NULL;
 		}
-
-		m_SoundCapture = new ::SoundCaptureImpl(m_waveFormatex, m_hWnd);
+		m_SoundCapture = new ::SoundCaptureImpl(m_waveFormatex, m_hWnd, m_strRecordFilePath.GetBuffer());
 		m_SoundCapture->Init();
+		m_SoundCapture->Encoder((Codec*)m_pCurrentSelCodec);
 		m_SoundCapture->Start();
 	}
 	else
@@ -219,19 +264,30 @@ void CSoundTestToolDlg::OnBnClickedBtnRecord()
 		if (m_SoundCapture) 
 		{
 			m_SoundCapture->Stop();
+			m_SoundCapture->Exit();
 			delete m_SoundCapture;
+			m_SoundCapture = NULL;
 		}
 	}
 
 	SetDlgItemText(IDC_STATIC_STATUSTIME, _T("录音状态:"));
 }
 
+void CSoundTestToolDlg::ReadPcmData()
+{
+	SoundDeserializer deSerizer(m_strPlayFilePath.GetBuffer());
+	deSerizer.Init();
+	deSerizer.SetJitterBuffer(&m_JitterBuffer);
+	deSerizer.SetJitterBufferData();
+}
+
+
 void CSoundTestToolDlg::OnBnClickedBtnPlay()
 {
 	m_bPlaying = true;
 	UpdateData(TRUE);
 	//更新设置参数
-
+	PackFormat();
 	SetDlgItemText(IDC_STATIC_STATUSTIME, _T("播放状态:"));
 	CString strText;
 	GetDlgItemText(IDC_BTN_PLAY, strText);
@@ -240,18 +296,25 @@ void CSoundTestToolDlg::OnBnClickedBtnPlay()
 		SetDlgItemText(IDC_BTN_PLAY, _T("停止"));
 		if (m_SoundPlay)
 		{
+			m_SoundPlay->Stop();
+			m_SoundPlay->Exit();
 			delete m_SoundPlay;
-			m_SoundPlay = new ::SoundPlayImpl(m_waveFormatex, m_hWnd);
-			m_SoundPlay->JitterBuf(&m_JitterBuffer);
-			m_SoundPlay->Init();
-			m_SoundPlay->Start();
+			m_SoundPlay = NULL;				
 		}
+		m_SoundPlay = new ::SoundPlayImpl(m_waveFormatex, m_hWnd, m_strPlayFilePath.GetBuffer());
+		m_SoundPlay->JitterBuf(&m_JitterBuffer);
+		m_SoundPlay->Decoder((Codec*)m_pCurrentSelCodec);	
+		ReadPcmData();
+		m_SoundPlay->Init();
+		m_SoundPlay->Start();
 	}
 	else
 	{
 		SetDlgItemText(IDC_BTN_PLAY, _T("播放"));
 		m_SoundPlay->Stop();
+		m_SoundPlay->Exit();
 		delete m_SoundPlay;
+		m_SoundPlay = NULL;
 	}
 }
 

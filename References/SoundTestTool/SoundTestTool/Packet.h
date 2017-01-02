@@ -27,7 +27,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-//#include "beat.h"
+#include "beat.h"
 
 class Contributor
 {
@@ -54,8 +54,8 @@ public:
 	int PacketLength() const;
 	const char* GetPacket() const;
 	const char* Data() const;
-	int RwDataLength() const;
 	char* RwData() const;
+	int  RwDataLength() const;
 	unsigned short SequenceNumber() const;
 	unsigned long Timestamp() const;
 	void Timestamp(unsigned long TimeStamp);
@@ -71,7 +71,12 @@ public:
 	void RecieveTime(unsigned long timeStamp);
 	unsigned long RecieveTime() const;
     static Packet* TmpGetPacketFromBuffer(char* buffer, int length);
+    static Packet* GetPacketFromBuffer(char* buffer, int length);
     static int GetPacketsFromBuffer(char* buffer, int length, Packet** Packets);
+	char *GetTestData()
+	{
+		return (char *)m_Packet;
+	}
 protected:
 	Packet(char *packet, int len, unsigned char nContributors);
 	Packet(char *packet, int len);
@@ -82,6 +87,8 @@ protected:
 	void DataLength(int dataLength);
 	void IsData(bool isData);
 	void IsCommand(bool isCommand);
+	
+
 	unsigned char *m_Packet;
 	int m_BufLen;
 	unsigned long m_RecieveTime;

@@ -51,11 +51,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\speex\include;..\..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Dsound.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Winmm.lib;iphlpapi.lib;Ws2_32.lib</AdditionalDependencies>
+      <AdditionalDependencies>libspeex.lib;Dsound.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Winmm.lib;iphlpapi.lib;Ws2_32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\speex\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -101,12 +103,17 @@
     <None Include="SoundTestTool.aps" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ActionEdit.h" />
+    <ClInclude Include="beat.h" />
+    <ClInclude Include="beatLog_.h" />
+    <ClInclude Include="Codec.h" />
     <ClInclude Include="DirectXFullDuplexAudioDevice.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="Jitter.h" />
     <ClInclude Include="JitterBuffer.h" />
     <ClInclude Include="MyTime.h" />
+    <ClInclude Include="NetAddress.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Serializer.h" />
@@ -116,6 +123,7 @@
     <ClInclude Include="SoundRecorder.h" />
     <ClInclude Include="SoundTestTool.h" />
     <ClInclude Include="SoundTestToolDlg.h" />
+    <ClInclude Include="SpeexEC.h" />
     <ClInclude Include="SString.h" />
     <ClInclude Include="SSystem.h" />
     <ClInclude Include="stdafx.h" />
@@ -123,12 +131,16 @@
     <ClInclude Include="Thread.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ActionEdit.cpp" />
+    <ClCompile Include="beatLog_.cpp" />
+    <ClCompile Include="Codec.cpp" />
     <ClCompile Include="DirectXFullDuplexAudioDevice.cpp" />
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="Jitter.cpp" />
     <ClCompile Include="JitterBuffer.cpp" />
     <ClCompile Include="MyTime.cpp" />
+    <ClCompile Include="NetAddress.cpp" />
     <ClCompile Include="Packet.cpp" />
     <ClCompile Include="Serializer.cpp" />
     <ClCompile Include="SoundCapture.cpp" />
@@ -138,6 +150,7 @@
     <ClCompile Include="SoundTest.cpp" />
     <ClCompile Include="SoundTestTool.cpp" />
     <ClCompile Include="SoundTestToolDlg.cpp" />
+    <ClCompile Include="SpeexEC.cpp" />
     <ClCompile Include="SString.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
