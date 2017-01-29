@@ -46,7 +46,7 @@ JingleMain::JingleMain()
 :m_Running(false)
 ,m_JingleAdapter(m_SS)
 {
-	beatLog_Interface::SetLogCallback(::BeatLogCallback);
+//	beatLog_Interface::SetLogCallback(::BeatLogCallback);
 }
 
 JingleMain::~JingleMain(void)

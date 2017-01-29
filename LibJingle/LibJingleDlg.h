@@ -27,6 +27,7 @@
 
 #include "JingleMain.h"
 #include "afxwin.h"
+#include "SQLConnector.h"
 
 
 // CLibJingleDlg dialog
@@ -44,7 +45,10 @@ public:
 	void AddToXMLDebug(const char* msg);
 	void AddToBeatDebug(const char* msg);
     void AddToChatDebug(const char* msg);
-	protected:
+
+	virtual BOOL PreTranslateMessage( MSG* pMsg ) override;
+
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
 // Implementation
@@ -54,13 +58,24 @@ protected:
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
+	//************************************
+	// Method:    GetUserPasswordFromSql
+	// FullName:  CLibJingleDlg::GetUserPasswordFromSql
+	// Access:    protected 
+	// Returns:   bool
+	// Qualifier: 启动时,通过数据库服务器,获取登录用户名和密码,通过IP地址方式获取,从用户资料表中获取,要求管理员需要按照ip地址配置好用户名和密码之类的信息
+	//************************************
+	AccountInfo GetUserPasswordFromServer();
 	bool InitMouseHook();
 	LRESULT OnHardwareMessage(WPARAM wParam, LPARAM lParam);
+	CString GetMoudlePath();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 	afx_msg LRESULT OnWM_APP(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnClose();
+    LRESULT OnShowTask(WPARAM wParam,LPARAM lParam);
 public:
 	void AddToRoster(const char* jid);
 	void RemoveFromRoster(const char* jid);
@@ -69,6 +84,7 @@ public:
 	CListBox m_lRoster;
 public:
 	afx_msg void OnBnClickedCall();
+	afx_msg void OnBnClickedShowMax();
 public:
 	CEdit m_sJid;
 public:
@@ -103,6 +119,7 @@ public:
 	CButton m_bHangup;
 public:
     CButton m_bSendmsg;
+
 public:
 //	afx_msg void OnEnChangeJid2();
 public:

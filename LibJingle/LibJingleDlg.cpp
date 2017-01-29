@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------//
+ï»¿//----------------------------------------------------------------------//
 //                                                                      //
 // MyJingle is a GoogleTalk compatible VoIP Client based on Jingle      //
 //                                                                      //
@@ -30,6 +30,13 @@
 #include "beat/beatLog_.h"
 #include "afxcmn.h"
 #include "CryptoService.h"
+#include <afxpriv.h>
+#include <mmsystem.h>
+#include "Common.h"
+#include "SQLConnector.h"
+#include "Config.h"
+#include <string>
+#include <winbase.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -37,7 +44,7 @@
 
 typedef void (*installHook)(HWND, DWORD);
 #define WM_MM (WM_USER + 2)
-
+#define WM_MAX_SHOW (WM_USER + 3)
 
 // CAboutDlg dialog used for App About
 
@@ -58,6 +65,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	CRichEditCtrl m_cLicence;
+	afx_msg void OnEnChangeRichedit21();
 };
 
 CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
@@ -72,6 +80,18 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL CAboutDlg::OnInitDialog()
 {
+	CString strFileName;
+	AfxGetModuleFileName(theApp.m_hInstance, strFileName);
+	int nPos = strFileName.ReverseFind('\\');
+	strFileName.Delete(nPos, strFileName.GetLength() - nPos);
+
+	BOOL bRet = ((strFileName + _T("\\alerting.mp3")).GetBuffer(), SND_ASYNC);
+	if (bRet)
+	{
+		int nErr = GetLastError();
+		nErr;
+	}
+
 	CDialog::OnInitDialog();
 
 	CFile licence;
@@ -91,6 +111,7 @@ BOOL CAboutDlg::OnInitDialog()
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
+	ON_EN_CHANGE(IDC_RICHEDIT21, &CAboutDlg::OnEnChangeRichedit21)
 END_MESSAGE_MAP()
 
 
@@ -133,20 +154,31 @@ void CLibJingleDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_MSG_INPUT, m_cChatMsg);
 }
 
+#define WM_SHOWTASK WM_USER +1 
+
+NOTIFYICONDATA nid; 
+
+
 BEGIN_MESSAGE_MAP(CLibJingleDlg, CDialog)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
+	ON_WM_CLOSE()
 	ON_WM_QUERYDRAGICON()
+	ON_WM_SYSCOMMAND() 
+
 	//}}AFX_MSG_MAP
 	ON_MESSAGE(WM_APP, &CLibJingleDlg::OnWM_APP)
 	ON_MESSAGE(WM_MM, &CLibJingleDlg::OnHardwareMessage)
 	
 	ON_BN_CLICKED(IDCALL, &CLibJingleDlg::OnBnClickedCall)
+	ON_BN_CLICKED(WM_MAX_SHOW, &CLibJingleDlg::OnBnClickedShowMax)
 	ON_BN_CLICKED(IDHANGUP, &CLibJingleDlg::OnBnClickedHangup)
 	ON_LBN_SELCHANGE(IDC_LROSTER, &CLibJingleDlg::OnLbnSelchangeLroster)
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDLOGIN, &CLibJingleDlg::OnBnClickedLogin)
 	ON_BN_CLICKED(IDLOGOUT, &CLibJingleDlg::OnBnClickedLogout)
+	ON_WM_QUERYDRAGICON() 
+	ON_MESSAGE(WM_SHOWTASK,OnShowTask) 
 //	ON_EN_CHANGE(IDC_JID2, &CLibJingleDlg::OnEnChangeJid2)
 ON_WM_DESTROY()
 ON_BN_CLICKED(IDSENDMSG, &CLibJingleDlg::OnBnClickedSendmsg)
@@ -189,21 +221,15 @@ BOOL CLibJingleDlg::OnInitDialog()
 	m_bDebugStatus.SetCheck(BST_CHECKED);
 	m_bDebugXML.SetCheck(BST_UNCHECKED);
 
-	m_cJid.SetWindowText((theApp.GetProfileString(_T("Account"), _T("JID"), 0)).GetBuffer());
-	
-	BYTE* encryptedPasswd = 0;
-	UINT encryptedPasswdLength = 0;
-	if (theApp.GetProfileBinary(_T("Account"), _T("PASSWD"), &encryptedPasswd, &encryptedPasswdLength))
-	{
-		CryptoService cs;
-		if(cs.Decrypt(encryptedPasswd, encryptedPasswdLength))
-		{
-			m_cPasswd.SetWindowText((TCHAR*) cs.GetBuffer());
-		}
-	}
+	//æ•°æ®åº“ä¸­è¯»å–ç™»å½•ç”¨æˆ·åå’Œå¯†ç 
+	AccountInfo info = GetUserPasswordFromServer();
+	CString strAccountCode(info.strAccount.c_str());
+	m_cJid.SetWindowText(strAccountCode);
+	CString strPassword(info.strPassword.c_str());
+	m_cPasswd.SetWindowText(strPassword);
 
 #ifdef __RELEASE_VERSION__
-	//³õÊ¼»¯Êó±ê¹³×Ó
+	//åˆå§‹åŒ–é¼ æ ‡é’©å­
 	InitMouseHook();
 	OnBnClickedLogin();
 #endif
@@ -212,10 +238,55 @@ BOOL CLibJingleDlg::OnInitDialog()
 }
 
 
-//³õÊ¼»¯Ó²¼þ£¬Ó²¼þÊÇÒ»¸öÊó±ê£¬Ö»ÊÇÐÞ¸Ä¹ýÊó±ê¼üÖµ
+AccountInfo CLibJingleDlg::GetUserPasswordFromServer()
+{
+	AccountInfo info;
+	using std::string;
+	if (LOADED_SUCCESS == CConfig::GetInstance().LoadConfigFile(CString2String(GetMoudleConfigIniPath()).c_str() ))
+	{
+		do//æ•°æ®åº“ä¿¡æ¯
+		{
+			string strDbName;
+			string strHost;
+			int    nPort = 3306;
+			string strUsrName;
+			string strPassword;
+
+			try
+			{
+			strDbName   = CConfig::GetInstance().GetString("DBNAME");
+			strHost     = CConfig::GetInstance().GetString("HOST");
+			nPort       = CConfig::GetInstance().GetInt("PORT");
+			strUsrName  = CConfig::GetInstance().GetString("USRNAME");
+			strPassword = CConfig::GetInstance().GetString("PASSWORD");
+			}
+			catch(std::exception &e)
+			{
+				beatLog_Error(("CLibJingleDlg", __FUNCDNAME__, "An Exception has occured while getting user info from config file!"));
+				break;
+			}
+			//è¿žæŽ¥æ•°æ®åº“
+			//TODO:ä¸ºä»€ä¹ˆè¿™é‡Œä¸éœ€è¦ç«¯å£,ç¼ºçœåªèƒ½æ˜¯3306??
+			CSQLConnector dbConnector;
+			bool bRet = dbConnector.Connect(strHost, nPort, strDbName, strUsrName, strPassword);
+			if (!bRet)
+			{
+				beatLog_Error(("CLibJingleDlg", __FUNCDNAME__, "An Exception has occured while connecting the mysql server!"));
+				break;
+			}
+			//TODO:é“¾æŽ¥æˆåŠŸ,å–ç™»å½•ç”¨æˆ·åå’Œå¯†ç 
+			info = dbConnector.GetAccountInfo(GetIPAddress());
+
+		}while(false);
+	}
+
+	return info;
+}
+
+//åˆå§‹åŒ–ç¡¬ä»¶ï¼Œç¡¬ä»¶æ˜¯ä¸€ä¸ªé¼ æ ‡ï¼Œåªæ˜¯ä¿®æ”¹è¿‡é¼ æ ‡é”®å€¼
 bool CLibJingleDlg::InitMouseHook()
 {
-	HINSTANCE hInstance = LoadLibrary(_T("MouseHook.dll"));
+	HINSTANCE hInstance = LoadLibraryA(("MouseHook.dll"));
 	if (NULL == hInstance) return false;
 	installHook mouseActivtion = (installHook)GetProcAddress(hInstance, "installMouseHook");
 	mouseActivtion(m_hWnd, WM_MM);
@@ -232,14 +303,14 @@ LRESULT CLibJingleDlg::OnHardwareMessage(WPARAM wParam, LPARAM lParam)
 
 	switch(wParam)
 	{
-		//×ó¼ü´òµç»°
+		//å·¦é”®æ‰“ç”µè¯
 	case WM_LBUTTONDOWN:
-		//TODO£ºµ±´òÁËÖ®ºó£¬ÖØ¸´°´ÒªÆÁ±Î
+		//TODOï¼šå½“æ‰“äº†ä¹‹åŽï¼Œé‡å¤æŒ‰è¦å±è”½
 		OnBnClickedCall();
 		break;
-	   //ÓÒ¼ü¹Ò¶Ïµç»°
+	   //å³é”®æŒ‚æ–­ç”µè¯
 	case WM_RBUTTONDOWN:
-		//TODO:Òª¼ì²é£¬ÕýÔÚÍ¨»°ÖÐ²ÅÄÜÖ´ÐÐ¹Ò¶Ï£¬·ñÔò²»´¦Àí
+		//TODO:è¦æ£€æŸ¥ï¼Œæ­£åœ¨é€šè¯ä¸­æ‰èƒ½æ‰§è¡ŒæŒ‚æ–­ï¼Œå¦åˆ™ä¸å¤„ç†
 		OnBnClickedHangup();
 		break;
 	default:
@@ -250,13 +321,70 @@ LRESULT CLibJingleDlg::OnHardwareMessage(WPARAM wParam, LPARAM lParam)
 }
 
 
+CString CLibJingleDlg::GetMoudlePath()
+{
+	CString strFileName;
+	AfxGetModuleFileName(theApp.m_hInstance, strFileName);
+	int nPos = strFileName.ReverseFind('\\');
+	strFileName.Delete(nPos, strFileName.GetLength() - nPos);
+	return strFileName;
+}
+
+LRESULT CLibJingleDlg::OnShowTask(WPARAM wParam,LPARAM lParam) 
+{ 
+	if (wParam != IDR_MAINFRAME) 
+	{ 
+		return 1; 
+	} 
+	switch(lParam) 
+	{ 
+	case WM_RBUTTONUP: 
+		{ 
+			LPPOINT lpoint = new tagPOINT; 
+			::GetCursorPos(lpoint); 
+			CMenu menu; 
+			menu.CreatePopupMenu(); 
+			menu.AppendMenu(MF_STRING,WM_MAX_SHOW, _T("æœ€å¤§åŒ–")); 
+			menu.AppendMenu(MF_STRING,WM_DESTROY, _T("é€€å‡º")); 
+			menu.TrackPopupMenu(TPM_LEFTALIGN,lpoint->x,lpoint->y,this); 
+			HMENU hmenu = menu.Detach(); 
+			menu.DestroyMenu(); 
+			delete lpoint; 
+			this->DestroyWindow(); 
+		} 
+		break; 
+	case WM_LBUTTONDBLCLK: 
+		{ 
+			this->ShowWindow(SW_SHOW); 
+			Shell_NotifyIcon(NIM_DELETE,&nid); 
+		} 
+		break; 
+	case WM_MAX_SHOW:
+		this->ShowWindow(SW_SHOW); 
+		Shell_NotifyIcon(NIM_DELETE,&nid); 
+		break;
+
+	} 
+	return 0; 
+} 
+
+
+void CLibJingleDlg::OnBnClickedShowMax()
+{
+	this->ShowWindow(SW_SHOW); 
+	Shell_NotifyIcon(NIM_DELETE,&nid); 
+}
 bool CLibJingleDlg::AcceptCallFrom(const char* jid)
 {
 	bool acceptCall(false);
 	CString cJid(jid);
-	CString message(_T("ÄúÓÐÐÂµÄÀ´µç: "));
+	CString message(_T("æ‚¨æœ‰æ–°çš„æ¥ç”µ: "));
 	message.Append(cJid);
-	message.Append(_T("\r\n ÊÇ·ñ½ÓÌý?"));
+	message.Append(_T("\r\n æ˜¯å¦æŽ¥å¬?"));
+
+	CString strSoundPath = 	GetMoudlePath();
+	//MCIWndCreate(
+	sndPlaySound((strSoundPath + _T("\\alerting.mp3")).GetBuffer(), SND_ASYNC);
 	if (IDYES == AfxMessageBox(message, MB_YESNO, 0))
 	{
 		acceptCall = true;
@@ -280,40 +408,6 @@ void CLibJingleDlg::AddToStatusDebug(TCHAR* msg)
 	}
 }
 
-int UTF82Unicode(LPCSTR pInput, int nInputLen, WCHAR **ppOutPut, int* nOutputLen)
-{
-    if (NULL == (*ppOutPut))
-    {
-        int nLen = MultiByteToWideChar(CP_UTF8, 0, pInput, nInputLen, NULL, 0);
-        *ppOutPut = new WCHAR[nLen + 1];
-        ASSERT(NULL != *ppOutPut);
-        (*ppOutPut)[nLen] = '\0';
-        *nOutputLen = nLen + 1;
-    }else
-    {
-        memset((*ppOutPut), 0, *nOutputLen);
-    }
-
-    return MultiByteToWideChar(CP_UTF8, 0, pInput, nInputLen, *ppOutPut, *nOutputLen);
-}
-
-CString UTF82Unicode(LPCSTR pUtf8)
-{
-    if (NULL == pUtf8)
-    {
-        return CString(L"");
-    }
-
-    WCHAR* pOut = NULL;
-    int    nOut = 0;
-
-    UTF82Unicode(pUtf8, strlen(pUtf8), &pOut, &nOut);
-
-    CString strTemp = pOut;
-    delete[] pOut;
-
-    return strTemp;
-}
 
 void CLibJingleDlg::AddToChatDebug(const char* msg)
 {
@@ -329,6 +423,20 @@ void CLibJingleDlg::AddToChatDebug(const char* msg)
             pEdit->LineScroll(pEdit->GetLineCount());
         }
     }
+}
+
+BOOL CLibJingleDlg::PreTranslateMessage( MSG* pMsg )
+{
+    if (WM_KEYDOWN == pMsg->message)
+	{
+		//æ‹¦æˆªescæ¶ˆæ¯
+		if (VK_ESCAPE == pMsg->wParam)
+		{
+			return TRUE;
+		}
+	}
+
+	return CDialog::PreTranslateMessage(pMsg);
 }
 
 void CLibJingleDlg::AddToXMLDebug(const char* msg)
@@ -431,6 +539,19 @@ LRESULT CLibJingleDlg::OnWM_APP(WPARAM wParam, LPARAM lParam)
 	return res;
 }
 
+void CLibJingleDlg::OnClose()
+{
+	nid.cbSize = (DWORD)sizeof(NOTIFYICONDATA); 
+	nid.hWnd = this->m_hWnd; 
+	nid.uID = IDR_MAINFRAME; 
+	nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP; 
+	nid.uCallbackMessage = WM_SHOWTASK; 
+	nid.hIcon = LoadIcon(AfxGetInstanceHandle(),MAKEINTRESOURCE(IDR_MAINFRAME)); 
+	wcscpy(nid.szTip, _T("è®¡åˆ’ä»»åŠ¡æé†’"));// 
+	Shell_NotifyIcon(NIM_ADD,&nid); 
+	this->ShowWindow(SW_HIDE); 
+}
+
 void CLibJingleDlg::OnBnClickedCall()
 {
 	CString sJID;
@@ -509,51 +630,14 @@ void CLibJingleDlg::OnBnClickedLogout()
 
 void CLibJingleDlg::OnDestroy()
 {
-	CString sJID;
-	m_cJid.GetWindowText(sJID);
-	theApp.WriteProfileString(_T("Account"), _T("JID"), sJID);
-
-	CString sPasswd;
-	m_cPasswd.GetWindowText(sPasswd);
-
-	CryptoService cs;
-	if(cs.Encrypt((BYTE*)sPasswd.GetBuffer(), (sPasswd.GetLength() + 1) * sizeof(TCHAR), _T("XMPP Password")))
-	{
-		theApp.WriteProfileBinary(_T("Account"), _T("PASSWD"), cs.GetBuffer(), cs.GetLength());
-	}
-
 	CDialog::OnDestroy();
 }
 
-int Unicode2UTF8(LPCWSTR pInput, int nInputLen, char **ppOutPut, int* nOutputLen)
-{
-    if (NULL == (*ppOutPut))
-    {
-        int nLen = WideCharToMultiByte(CP_UTF8, 0, pInput, nInputLen, NULL, 0, NULL, 0);
-        *ppOutPut = new char[nLen + 1];
-        ASSERT(NULL != *ppOutPut);
-        (*ppOutPut)[nLen] = '\0';
-        *nOutputLen = nLen + 1;
-    }
-
-    return WideCharToMultiByte(CP_UTF8, 0, pInput, nInputLen, *ppOutPut, *nOutputLen, NULL, 0);
-
-}
-
-CStringA Unicode2UTF8(LPCWSTR pInput)
-{
-    char * tmp=NULL;
-    int i=0;
-    Unicode2UTF8(pInput,_tcslen(pInput),&tmp,&i);
-    CStringA tmpstr=tmp;
-    delete tmp;
-    return tmpstr;
-}
 
 //added by wanglg
 void CLibJingleDlg::OnBnClickedSendmsg()
 {
-    // TODO: ?¨²¡ä?¨¬¨ª?¨®???t¨ª¡§?a¡ä|¨¤¨ª3¨¬D¨°¡ä¨²??
+    // TODO: ?Ãºâ€²?Ã¬Ã­?Ã³???tÃ­Â¨?aâ€²|Ã Ã­3Ã¬DÃ²â€²Ãº??
     CString csStr;
     m_cChatMsg.GetWindowText(csStr);
     CStringA caStr = Unicode2UTF8(csStr);
@@ -561,7 +645,7 @@ void CLibJingleDlg::OnBnClickedSendmsg()
 
     if (cnmsg.empty())
     {
-        csStr = _T("??o?¡ê?XXX¡ê?");
+        csStr = _T("??o?ï¿¡?XXXï¿¡?");
         caStr = Unicode2UTF8(csStr);
         cnmsg = caStr;
     }
@@ -573,7 +657,7 @@ void CLibJingleDlg::OnBnClickedSendmsg()
 
     if (jidmsg.empty())
     {
-        AfxMessageBox(_T("??????¨®??¡ì¡ê?"));
+        AfxMessageBox(_T("??????Ã³??Â§ï¿¡?"));
         return;
     }
 
@@ -584,3 +668,12 @@ void CLibJingleDlg::OnBnClickedSendmsg()
     m_cChatMsg.SetFocus();
     m_cChatMsg.UpdateData(FALSE);
 }
+
+
+void CAboutDlg::OnEnChangeRichedit21()
+{
+	
+}
+
+
+

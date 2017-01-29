@@ -25,6 +25,15 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="config">
+      <UniqueIdentifier>{b3fca927-1ace-4dd2-886f-3599d3900345}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sql">
+      <UniqueIdentifier>{e08a746e-d933-48ee-9b7f-35c681dc053c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{9392ab0e-26cc-4554-909f-80a5a6f4c465}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\References\beat\Codec.h">
@@ -80,6 +89,18 @@
     </ClInclude>
     <ClInclude Include="Win32JingleAdapter.h">
       <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>config</Filter>
+    </ClInclude>
+    <ClInclude Include="FriendList.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLConnector.h">
+      <Filter>sql</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +199,18 @@
     </ClCompile>
     <ClCompile Include="Win32JingleAdapter.cpp">
       <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>config</Filter>
+    </ClCompile>
+    <ClCompile Include="FriendList.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLConnector.cpp">
+      <Filter>sql</Filter>
+    </ClCompile>
+    <ClCompile Include="Common.cpp">
+      <Filter>util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

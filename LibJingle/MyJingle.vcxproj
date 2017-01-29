@@ -60,6 +60,8 @@
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VoiceChat</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VoiceChat</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
@@ -69,7 +71,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>./;../References/Expat-1.95.8/Source/lib;../References/speex/include;../References;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\poco\Util\include;..\..\poco\XML\include\;..\..\poco\Data\MySQL\include;..\..\poco\Data\include;..\..\poco\Foundation\include;./;../References/Expat-1.95.8/Source/lib;../References/speex/include;../References;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -85,9 +87,9 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>Ws2_32.lib;Secur32.lib;iphlpapi.lib;libexpat.lib;libexpatw.lib;Kernel32.lib;Crypt32.lib;winmm.lib;Dsound.lib;libspeexD.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>../References/Expat-1.95.8/Libs;../References/speex/bin/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>PocoDatad.lib;PocoFoundationd.lib;Ws2_32.lib;Secur32.lib;iphlpapi.lib;libexpat.lib;libexpatw.lib;Kernel32.lib;Crypt32.lib;winmm.lib;Dsound.lib;libspeexD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)VoiceChat.exe</OutputFile>
+      <AdditionalLibraryDirectories>..\..\poco\lib;../References/Expat-1.95.8/Libs;../References/speex/bin/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -95,6 +97,10 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
@@ -103,7 +109,7 @@
       <ValidateAllParameters>false</ValidateAllParameters>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>./;../References/Expat-1.95.8/Source/lib;../References/speex/include;../References;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\poco\Util\include;..\..\poco\XML\include\;..\..\poco\Data\MySQL\include;..\..\poco\Data\include;..\..\poco\Foundation\include;./;../References/Expat-1.95.8/Source/lib;../References/speex/include;../References;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -118,8 +124,8 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>Ws2_32.lib;Secur32.lib;iphlpapi.lib;libexpat.lib;libexpatw.lib;Kernel32.lib;Crypt32.lib;winmm.lib;Dsound.lib;libspeex.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../References/Expat-1.95.8/Libs;../References/speex/bin/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>PocoDatad.lib;PocoFoundationd.lib;Ws2_32.lib;Secur32.lib;iphlpapi.lib;libexpat.lib;libexpatw.lib;Kernel32.lib;Crypt32.lib;winmm.lib;Dsound.lib;libspeex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\poco\lib;../References/Expat-1.95.8/Libs;../References/speex/bin/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -139,6 +145,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\References\beat\Codec.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="FriendList.h" />
     <ClInclude Include="presenceouttask.h" />
     <ClInclude Include="presencepushtask.h" />
     <ClInclude Include="BeatMediaChannel.h" />
@@ -152,6 +161,7 @@
     <ClInclude Include="LibJingleDlg.h" />
     <ClInclude Include="MessageTask.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SQLConnector.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="ToJingleMessage.h" />
     <ClInclude Include="Win32CallClient.h" />
@@ -179,6 +189,9 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="Common.cpp" />
+    <ClCompile Include="Config.cpp" />
+    <ClCompile Include="FriendList.cpp" />
     <ClCompile Include="presenceouttask.cpp" />
     <ClCompile Include="presencepushtask.cpp" />
     <ClCompile Include="BeatMediaChannel.cpp" />
@@ -191,6 +204,7 @@
     <ClCompile Include="LibJingle.cpp" />
     <ClCompile Include="LibJingleDlg.cpp" />
     <ClCompile Include="MessageTask.cpp" />
+    <ClCompile Include="SQLConnector.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

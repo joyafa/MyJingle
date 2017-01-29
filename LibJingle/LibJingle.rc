@@ -13,13 +13,102 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// German (Germany) resources
+// 中文(简体，中国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 372, 238
+STYLE DS_SYSMODAL | DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOPMOST
+CAPTION "关于"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,7,7,20,20
+    LTEXT           "MyJingle a GoogleTalk client based on LibJingle",IDC_STATIC,38,10,188,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2006 bluehands GmbH && Co.mmunication KG",IDC_STATIC,38,20,194,8
+    DEFPUSHBUTTON   "OK",IDOK,315,7,50,16,WS_GROUP
+    CONTROL         "",IDC_RICHEDIT21,"RichEdit20W",ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY | WS_BORDER | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP,7,42,358,189
+    LTEXT           "Licence:",IDC_STATIC,7,34,27,8
+END
+
+IDD_LIBJINGLE_DIALOG DIALOGEX 0, 0, 232, 302
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "电话"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_JID2,49,7,122,16,ES_AUTOHSCROLL
+    EDITTEXT        IDC_Passwd,49,24,122,16,ES_PASSWORD | ES_AUTOHSCROLL
+    PUSHBUTTON      "登录",IDLOGIN,172,7,53,16
+    LISTBOX         IDC_LROSTER,7,54,164,113,LBS_SORT | LBS_NOINTEGRALHEIGHT | LBS_DISABLENOSCROLL | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_JID,49,174,123,16,ES_AUTOHSCROLL
+    EDITTEXT        IDC_DEBUG,7,226,165,69,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | WS_VSCROLL | WS_HSCROLL
+    PUSHBUTTON      "登出",IDLOGOUT,172,26,53,16,WS_DISABLED
+    PUSHBUTTON      "电话",IDCALL,172,66,53,16,WS_DISABLED
+    PUSHBUTTON      "挂断",IDHANGUP,172,86,53,16,WS_DISABLED
+    CONTROL         "Status Msgs",IDC_DEBUGSTATUS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,171,240,54,10
+    CONTROL         "Beat Msgs",IDC_DEBUGBEAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,262,53,10
+    CONTROL         "All XML Msgs",IDC_DEBUGXML,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,285,53,10
+    LTEXT           "用户名:",IDC_STATIC,7,7,42,8
+    LTEXT           "密码:",IDC_STATIC,7,24,44,8
+    LTEXT           "在线好友:",IDC_STATIC,7,42,44,9
+    PUSHBUTTON      "发送",IDSENDMSG,172,210,53,16,WS_DISABLED
+    EDITTEXT        IDC_MSG_INPUT,7,194,164,30,ES_AUTOHSCROLL
+    LTEXT           "电话:",IDC_STATIC,9,176,44,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 365
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 231
+    END
+
+    IDD_LIBJINGLE_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 225
+        VERTGUIDE, 49
+        VERTGUIDE, 51
+        VERTGUIDE, 171
+        VERTGUIDE, 172
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 295
+        HORZGUIDE, 24
+        HORZGUIDE, 42
+        HORZGUIDE, 102
+        HORZGUIDE, 120
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // 中文(简体，中国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// 德语(德国) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
-#ifdef _WIN32
 LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
 #pragma code_page(1252)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -68,54 +157,6 @@ IDR_MAINFRAME           ICON                    "res\\LibJingle.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Dialog
-//
-
-IDD_ABOUTBOX DIALOGEX 0, 0, 372, 238
-STYLE DS_SYSMODAL | DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_TOPMOST
-CAPTION "About LibJingle"
-FONT 8, "MS Shell Dlg", 0, 0, 0x1
-BEGIN
-    ICON            IDR_MAINFRAME,IDC_STATIC,7,7,21,20
-    LTEXT           "MyJingle a GoogleTalk client based on LibJingle",IDC_STATIC,38,10,188,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2006 bluehands GmbH && Co.mmunication KG",IDC_STATIC,38,20,194,8
-    DEFPUSHBUTTON   "OK",IDOK,315,7,50,16,WS_GROUP
-    CONTROL         "",IDC_RICHEDIT21,"RichEdit20W",ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY | WS_BORDER | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP,7,42,358,189
-    LTEXT           "Licence:",IDC_STATIC,7,34,27,8
-END
-
-IDD_LIBJINGLE_DIALOG DIALOGEX 0, 0, 417, 302
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_APPWINDOW
-CAPTION "MyJingle"
-FONT 8, "MS Shell Dlg", 0, 0, 0x1
-BEGIN
-    EDITTEXT        IDC_JID2,35,7,304,16,ES_AUTOHSCROLL
-    EDITTEXT        IDC_Passwd,35,24,304,16,ES_PASSWORD | ES_AUTOHSCROLL
-    PUSHBUTTON      "Login",IDLOGIN,342,7,68,16
-    LISTBOX         IDC_LROSTER,35,42,304,57,LBS_SORT | LBS_NOINTEGRALHEIGHT | LBS_DISABLENOSCROLL | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_JID,35,102,304,16,ES_AUTOHSCROLL
-    EDITTEXT        IDC_DEBUG,35,147,304,148,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | WS_VSCROLL | WS_HSCROLL
-    PUSHBUTTON      "Logout",IDLOGOUT,342,26,68,16,WS_DISABLED
-    PUSHBUTTON      "Call",IDCALL,342,66,68,16,WS_DISABLED
-    PUSHBUTTON      "Hangup",IDHANGUP,342,86,68,16,WS_DISABLED
-    CONTROL         "Status Msgs",IDC_DEBUGSTATUS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,342,256,55,10
-    CONTROL         "Beat Msgs",IDC_DEBUGBEAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,342,271,49,10
-    CONTROL         "All XML Msgs",IDC_DEBUGXML,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,342,285,56,10
-    LTEXT           "JID:",IDC_STATIC,7,7,14,8
-    LTEXT           "Passwd:",IDC_STATIC,7,24,27,8
-    LTEXT           "Roster:",IDC_STATIC,7,42,27,9
-    LTEXT           "Call to:",IDC_STATIC,7,102,27,10
-    LTEXT           "Debug:",IDC_STATIC,7,147,24,8
-    PUSHBUTTON      "SendMsg",IDSENDMSG,342,127,68,14,WS_DISABLED
-    EDITTEXT        IDC_MSG_INPUT,35,127,304,15,ES_AUTOHSCROLL
-    LTEXT           "StrInput",IDC_STATIC,7,130,27,8
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Version
 //
 
@@ -155,50 +196,15 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
-BEGIN
-    IDD_ABOUTBOX, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 365
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 231
-    END
-
-    IDD_LIBJINGLE_DIALOG, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 410
-        VERTGUIDE, 34
-        VERTGUIDE, 35
-        VERTGUIDE, 339
-        VERTGUIDE, 342
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 295
-        HORZGUIDE, 24
-        HORZGUIDE, 42
-        HORZGUIDE, 102
-        HORZGUIDE, 120
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_ABOUTBOX            "&About MyJingle..."
 END
 
-#endif    // German (Germany) resources
+#endif    // 德语(德国) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
