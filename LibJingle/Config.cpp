@@ -114,6 +114,12 @@ std::string CConfig:: GetString(const std:: string & strKey)
                       sprintf(chErrMsg , "参数[%s]未设置:%s" , strKey .c_str(), e.what ());
                       m_strErrMsg = chErrMsg;
                }
+			   catch (std::exception &e)
+			   {
+				   char chErrMsg [512] = {0};
+				   sprintf(chErrMsg , "参数[%s]未设置:%s" , strKey .c_str(), e.what ());
+				   m_strErrMsg = chErrMsg;
+			   }
         }
 
         return strValue ;
@@ -137,6 +143,12 @@ int CConfig ::GetInt( const std ::string &strKey)
                       sprintf(chErrMsg , "参数[%s]未设置:%s" , strKey .c_str(), e.what ());
                       m_strErrMsg = chErrMsg;
                }
+			   catch (std::exception &e)
+			   {
+				   char chErrMsg [512] = {0};
+				   sprintf(chErrMsg , "参数[%s]未设置:%s" , strKey .c_str(), e.what ());
+				   m_strErrMsg = chErrMsg;
+			   }
         }
 
         return nValue ;

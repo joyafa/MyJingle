@@ -34,6 +34,12 @@
     <Filter Include="util">
       <UniqueIdentifier>{9392ab0e-26cc-4554-909f-80a5a6f4c465}</UniqueIdentifier>
     </Filter>
+    <Filter Include="App\MusicPlay">
+      <UniqueIdentifier>{e808b504-ad5c-4f6f-8ecb-da513178b85d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App\ButtonSt">
+      <UniqueIdentifier>{d2bcfb04-5554-414d-9440-f64240d18a27}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\References\beat\Codec.h">
@@ -101,6 +107,21 @@
     </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="CallCommingDialog.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CallDialog.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MCIPlayMusic.h">
+      <Filter>App\MusicPlay</Filter>
+    </ClInclude>
+    <ClInclude Include="button\BtnST.h">
+      <Filter>App\ButtonSt</Filter>
+    </ClInclude>
+    <ClInclude Include="button\HyperLink.h">
+      <Filter>App\ButtonSt</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +232,21 @@
     </ClCompile>
     <ClCompile Include="Common.cpp">
       <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="CallCommingDialog.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CallDialog.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MCIPlayMusic.cpp">
+      <Filter>App\MusicPlay</Filter>
+    </ClCompile>
+    <ClCompile Include="button\BtnST.cpp">
+      <Filter>App\ButtonSt</Filter>
+    </ClCompile>
+    <ClCompile Include="button\HyperLink.cpp">
+      <Filter>App\ButtonSt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

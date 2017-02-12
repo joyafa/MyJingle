@@ -64,6 +64,22 @@ BEGIN
     LTEXT           "µç»°:",IDC_STATIC,9,176,44,10
 END
 
+IDD_CALL_DIALOG DIALOGEX 0, 0, 122, 124
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_CHILD
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "time",IDC_TIME,21,51,79,8
+    LTEXT           "name:",IDC_NAME,21,15,79,8
+END
+
+IDD_CALLCOMMING_DIALOG DIALOGEX 0, 0, 120, 121
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,83,86,20,20
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,17,86,20,20
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -95,6 +111,16 @@ BEGIN
         HORZGUIDE, 42
         HORZGUIDE, 102
         HORZGUIDE, 120
+    END
+
+    IDD_CALL_DIALOG, DIALOG
+    BEGIN
+        MOCKUP, 1, 50, 72, 136, ".\res\hangup_32x32.png"
+    END
+
+    IDD_CALLCOMMING_DIALOG, DIALOG
+    BEGIN
+        MOCKUP, 1, 50, 124, 141, ".\res\dial.png"
     END
 END
 #endif    // APSTUDIO_INVOKED

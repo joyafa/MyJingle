@@ -19,18 +19,53 @@ CString GetMoudlePath()
 }
 
 
-CString GetMoudleConfigIniPath()
+CString GetMoudleConfigPath()
 {
-	CString strFileName = _T("");
-	AfxGetModuleFileName(theApp.m_hInstance, strFileName);
-	int nPos = strFileName.Find(_T(".exe"));
+	CString strConfigPath = _T("");
+	AfxGetModuleFileName(theApp.m_hInstance, strConfigPath);
+	int nPos = strConfigPath.ReverseFind(_T('\\'));
 	if (nPos != -1)
 	{
-		strFileName.Delete(nPos, 4);
-		strFileName.Append(_T(".xml"));
+		strConfigPath.Delete(nPos + 1, strConfigPath.GetLength() - nPos - 1);
+	}
+	strConfigPath += _T("etc\\");
+
+	return strConfigPath;
+}
+
+
+CString GetMoudleResPath()
+{
+	CString strConfigPath = _T("");
+	AfxGetModuleFileName(theApp.m_hInstance, strConfigPath);
+	int nPos = strConfigPath.ReverseFind(_T('\\'));
+	if (nPos != -1)
+	{
+		strConfigPath.Delete(nPos + 1, strConfigPath.GetLength() - nPos - 1);
+	}
+	strConfigPath += _T("res\\");
+
+	return strConfigPath;
+}
+
+CString GetMoudleConfigFileName()
+{
+	CString strConfigFileName = _T("");
+	AfxGetModuleFileName(theApp.m_hInstance, strConfigFileName);
+	int nPos = strConfigFileName.Find(_T(".exe"));
+	if (nPos != -1)
+	{
+		strConfigFileName.Delete(nPos, 4);
+		strConfigFileName.Append(_T(".xml"));
+
+		int nPos = strConfigFileName.ReverseFind(_T('\\'));
+		if (nPos != -1)
+		{
+			strConfigFileName.Delete(0, nPos + 1);
+		}
 	}
 
-	return strFileName;
+	return strConfigFileName;
 }
 
 
@@ -111,4 +146,30 @@ string CString2String(const CString &str)
 {
 	USES_CONVERSION;
 	return (string)W2CA((LPCWSTR)str);
+}
+
+
+int Unicode2UTF8(LPCWSTR pInput, int nInputLen, char **ppOutPut, int* nOutputLen)
+{
+	if (NULL == (*ppOutPut))
+	{
+		int nLen = WideCharToMultiByte(CP_UTF8, 0, pInput, nInputLen, NULL, 0, NULL, 0);
+		*ppOutPut = new char[nLen + 1];
+		ASSERT(NULL != *ppOutPut);
+		(*ppOutPut)[nLen] = '\0';
+		*nOutputLen = nLen + 1;
+	}
+
+	return WideCharToMultiByte(CP_UTF8, 0, pInput, nInputLen, *ppOutPut, *nOutputLen, NULL, 0);
+
+}
+
+CStringA Unicode2UTF8(LPCWSTR pInput)
+{
+	char * tmp=NULL;
+	int i=0;
+	Unicode2UTF8(pInput,_tcslen(pInput),&tmp,&i);
+	CStringA tmpstr=tmp;
+	delete tmp;
+	return tmpstr;
 }

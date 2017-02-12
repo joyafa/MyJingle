@@ -71,7 +71,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\poco\Util\include;..\..\poco\XML\include\;..\..\poco\Data\MySQL\include;..\..\poco\Data\include;..\..\poco\Foundation\include;./;../References/Expat-1.95.8/Source/lib;../References/speex/include;../References;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\button\;..\..\poco\Util\include;..\..\poco\XML\include\;..\..\poco\Data\MySQL\include;..\..\poco\Data\include;..\..\poco\Foundation\include;./;../References/Expat-1.95.8/Source/lib;../References/speex/include;../References;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -109,7 +109,7 @@
       <ValidateAllParameters>false</ValidateAllParameters>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\poco\Util\include;..\..\poco\XML\include\;..\..\poco\Data\MySQL\include;..\..\poco\Data\include;..\..\poco\Foundation\include;./;../References/Expat-1.95.8/Source/lib;../References/speex/include;../References;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\button\;..\..\poco\Util\include;..\..\poco\XML\include\;..\..\poco\Data\MySQL\include;..\..\poco\Data\include;..\..\poco\Foundation\include;./;../References/Expat-1.95.8/Source/lib;../References/speex/include;../References;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -145,9 +145,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\References\beat\Codec.h" />
+    <ClInclude Include="button\BtnST.h" />
+    <ClInclude Include="button\HyperLink.h" />
+    <ClInclude Include="CallCommingDialog.h" />
+    <ClInclude Include="CallDialog.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="FriendList.h" />
+    <ClInclude Include="MCIPlayMusic.h" />
     <ClInclude Include="presenceouttask.h" />
     <ClInclude Include="presencepushtask.h" />
     <ClInclude Include="BeatMediaChannel.h" />
@@ -189,9 +194,14 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="button\BtnST.cpp" />
+    <ClCompile Include="button\HyperLink.cpp" />
+    <ClCompile Include="CallCommingDialog.cpp" />
+    <ClCompile Include="CallDialog.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="FriendList.cpp" />
+    <ClCompile Include="MCIPlayMusic.cpp" />
     <ClCompile Include="presenceouttask.cpp" />
     <ClCompile Include="presencepushtask.cpp" />
     <ClCompile Include="BeatMediaChannel.cpp" />

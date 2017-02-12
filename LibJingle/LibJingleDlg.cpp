@@ -37,6 +37,7 @@
 #include "Config.h"
 #include <string>
 #include <winbase.h>
+using namespace std;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -65,7 +66,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	CRichEditCtrl m_cLicence;
-	afx_msg void OnEnChangeRichedit21();
 };
 
 CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
@@ -75,7 +75,6 @@ CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_RICHEDIT21, m_cLicence);
 }
 
 BOOL CAboutDlg::OnInitDialog()
@@ -111,7 +110,6 @@ BOOL CAboutDlg::OnInitDialog()
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
-	ON_EN_CHANGE(IDC_RICHEDIT21, &CAboutDlg::OnEnChangeRichedit21)
 END_MESSAGE_MAP()
 
 
@@ -121,6 +119,8 @@ END_MESSAGE_MAP()
 CLibJingleDlg::CLibJingleDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CLibJingleDlg::IDD, pParent)
 	, m_lDebug(_T(""))
+	, m_pCallDialog(NULL)
+    , m_pCallCommingDialog(NULL)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -154,7 +154,8 @@ void CLibJingleDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_MSG_INPUT, m_cChatMsg);
 }
 
-#define WM_SHOWTASK WM_USER +1 
+#define WM_SHOWTASK WM_USER  + 1 
+#define WM_STOPMUSIC WM_USER + 2
 
 NOTIFYICONDATA nid; 
 
@@ -179,9 +180,12 @@ BEGIN_MESSAGE_MAP(CLibJingleDlg, CDialog)
 	ON_BN_CLICKED(IDLOGOUT, &CLibJingleDlg::OnBnClickedLogout)
 	ON_WM_QUERYDRAGICON() 
 	ON_MESSAGE(WM_SHOWTASK,OnShowTask) 
-//	ON_EN_CHANGE(IDC_JID2, &CLibJingleDlg::OnEnChangeJid2)
-ON_WM_DESTROY()
-ON_BN_CLICKED(IDSENDMSG, &CLibJingleDlg::OnBnClickedSendmsg)
+	//	ON_EN_CHANGE(IDC_JID2, &CLibJingleDlg::OnEnChangeJid2)
+	ON_MESSAGE(MM_MCINOTIFY, &CLibJingleDlg::OnMCINotify)
+	ON_MESSAGE(WM_STOPMUSIC, &CLibJingleDlg::OnStopMusic)
+
+	ON_WM_DESTROY()
+	ON_BN_CLICKED(IDSENDMSG, &CLibJingleDlg::OnBnClickedSendmsg)
 END_MESSAGE_MAP()
 
 
@@ -221,28 +225,85 @@ BOOL CLibJingleDlg::OnInitDialog()
 	m_bDebugStatus.SetCheck(BST_CHECKED);
 	m_bDebugXML.SetCheck(BST_UNCHECKED);
 
+	GetConfigInfo();
 	//数据库中读取登录用户名和密码
-	AccountInfo info = GetUserPasswordFromServer();
-	CString strAccountCode(info.strAccount.c_str());
+	m_AccountInfo = GetUserPasswordFromServer();
+	CString strAccountCode(m_AccountInfo.strAccount.c_str());
 	m_cJid.SetWindowText(strAccountCode);
-	CString strPassword(info.strPassword.c_str());
+	CString strPassword(m_AccountInfo.strPassword.c_str());
 	m_cPasswd.SetWindowText(strPassword);
 
-#ifdef __RELEASE_VERSION__
-	//初始化鼠标钩子
-	InitMouseHook();
-	OnBnClickedLogin();
-#endif
+
+	//运行模式，客户端模式界面最小化
+	beatLog_Info(("CLibJingleDlg", __FUNCTION__, "RunningMode:%s", m_strRunningMode.c_str()));
+	if ("ADMIN" != m_strRunningMode)
+	{
+		PostMessage(WM_CLOSE, 0, 0);
+	}
+
+	//呼叫对话框
+	m_pCallDialog = new CCallDialog;
+	m_pCallDialog->Create(IDD_CALL_DIALOG, this);
+	//先隐藏，呼叫
+	m_pCallDialog->ShowWindow(SW_HIDE);
+
+	//来电对话框，来电时显示
+	m_pCallCommingDialog = new CCallCommingDialog;
+	m_pCallCommingDialog->Create(IDD_CALLCOMMING_DIALOG, this);
+	m_pCallCommingDialog->ShowWindow(SW_HIDE);
+
+	//TODO:电话拨打事件
+	m_hBellEvent = CreateEventA(NULL, TRUE, FALSE, NULL);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
+}
+
+
+LRESULT CLibJingleDlg::OnMCINotify(WPARAM wParam, LPARAM lParam)  
+{  
+	if (wParam == MCI_NOTIFY_SUCCESSFUL )  
+	{  
+		//TODO:PATH是否通过lParam传
+		//PlaySound(m_strFilePath);  
+	}  
+	return 0;  
+}  
+
+LRESULT CLibJingleDlg::OnStopMusic( WPARAM wParam, LPARAM lParam )
+{
+	m_mciMusic.stop();
+
+	return 1;
+}
+
+
+void CLibJingleDlg::GetConfigInfo()
+{
+	CString strConfigPath = GetMoudleConfigPath() + GetMoudleConfigFileName();
+	string strResPath = CString2String(GetMoudleResPath());
+	if (LOADED_SUCCESS == CConfig::GetInstance().LoadConfigFile(CString2String(strConfigPath).c_str() ))
+	{
+		//运行模式
+		m_strRunningMode   = CConfig::GetInstance().GetString("RunningMode");
+
+		//来电铃声
+		string strNameIncommingBell = CConfig::GetInstance().GetString("IncommingBell");
+		m_strPathIncommingBell = strResPath + strNameIncommingBell;
+		//忙音
+		string strNameBusyBell      = CConfig::GetInstance().GetString("BusyBell");
+		m_strPathBusyBell = strResPath + strNameBusyBell;
+		//呼叫
+		string	strNameDialingBell   = CConfig::GetInstance().GetString("DialingBell");
+		m_strPathDialingBell = strResPath + strNameDialingBell;
+	}
 }
 
 
 AccountInfo CLibJingleDlg::GetUserPasswordFromServer()
 {
 	AccountInfo info;
-	using std::string;
-	if (LOADED_SUCCESS == CConfig::GetInstance().LoadConfigFile(CString2String(GetMoudleConfigIniPath()).c_str() ))
+	CString strConfigPath = GetMoudleConfigPath() + GetMoudleConfigFileName();
+	if (LOADED_SUCCESS == CConfig::GetInstance().LoadConfigFile(CString2String(strConfigPath).c_str() ))
 	{
 		do//数据库信息
 		{
@@ -276,23 +337,12 @@ AccountInfo CLibJingleDlg::GetUserPasswordFromServer()
 			}
 			//TODO:链接成功,取登录用户名和密码
 			info = dbConnector.GetAccountInfo(GetIPAddress());
-
+			info.strDomain = CConfig::GetInstance().GetString("DOMAIN");
 		}while(false);
 	}
-
 	return info;
 }
 
-//初始化硬件，硬件是一个鼠标，只是修改过鼠标键值
-bool CLibJingleDlg::InitMouseHook()
-{
-	HINSTANCE hInstance = LoadLibraryA(("MouseHook.dll"));
-	if (NULL == hInstance) return false;
-	installHook mouseActivtion = (installHook)GetProcAddress(hInstance, "installMouseHook");
-	mouseActivtion(m_hWnd, WM_MM);
-
-	return true;
-}
 
 LRESULT CLibJingleDlg::OnHardwareMessage(WPARAM wParam, LPARAM lParam)
 {
@@ -374,6 +424,56 @@ void CLibJingleDlg::OnBnClickedShowMax()
 	this->ShowWindow(SW_SHOW); 
 	Shell_NotifyIcon(NIM_DELETE,&nid); 
 }
+
+
+UINT __stdcall PlaySoundFunc(void *pvoid)
+{
+	_tagJidFrom *pFrom = (_tagJidFrom *)pvoid;
+	CLibJingleDlg *pDlag = (CLibJingleDlg *)pFrom->pWnd;
+	if (NULL== pDlag) return 0;
+
+	//电话60s不接听，认为超时，关闭铃声
+	//TODO：是否需要通过配置文件设置
+	DWORD dwRet = WaitForSingleObject(pDlag->m_hBellEvent, 60 * 1000);
+	if (dwRet ==  WAIT_OBJECT_0)
+	{
+		//直接停止不行,需要发送消息
+		PostMessage(pDlag->m_hWnd, WM_STOPMUSIC, NULL, NULL);
+		//pDlag->StopPlay();
+		//重置为无信号状态
+		//调用 SetEvent设置有信号之后,需要调用reset设置为无信号
+		ResetEvent(pDlag->m_hBellEvent);
+
+		//TODO： 
+		//接听
+		pDlag->GetJingleMain().JingleAdapter().Message().SetJidAndType(pFrom->cJid.GetBuffer(), ToJingleMessage::ACCEPT_CALL);
+		pDlag->GetJingleMain().JingleAdapter().SetEvent();
+	}
+	else //超时停止 或 异常 都停止
+	{
+		PostMessage(pDlag->m_hWnd, WM_STOPMUSIC, NULL, NULL);
+		//超时或者是拒绝进接听
+		pDlag->GetJingleMain().JingleAdapter().Message().SetJidAndType(pFrom->cJid.GetBuffer(), ToJingleMessage::REJECT_CALL);
+		pDlag->GetJingleMain().JingleAdapter().SetEvent();
+	}
+
+	return 1;
+}
+
+void CLibJingleDlg::PlaySound(const std::string &strSonndPath)
+{
+	//先停掉原有的声音
+	m_mciMusic.stop();
+
+	DWORD dwResult = m_mciMusic.play(this, CString(strSonndPath.c_str()) );  
+	if (dwResult != 0)  
+	{  
+		beatLog_Error(("CLibJingleDlg", __FUNCDNAME__, "Play sound failed: %s", m_mciMusic.getErrorMsg(dwResult)));
+	}  
+}
+
+
+
 bool CLibJingleDlg::AcceptCallFrom(const char* jid)
 {
 	bool acceptCall(false);
@@ -382,22 +482,22 @@ bool CLibJingleDlg::AcceptCallFrom(const char* jid)
 	message.Append(cJid);
 	message.Append(_T("\r\n 是否接听?"));
 
-	CString strSoundPath = 	GetMoudlePath();
-	//MCIWndCreate(
-	sndPlaySound((strSoundPath + _T("\\alerting.mp3")).GetBuffer(), SND_ASYNC);
-	if (IDYES == AfxMessageBox(message, MB_YESNO, 0))
-	{
-		acceptCall = true;
-		m_JingleMain.JingleAdapter().Message().SetJidAndType(cJid.GetBuffer(), ToJingleMessage::ACCEPT_CALL);
-		m_JingleMain.JingleAdapter().SetEvent();
-	}
-	else
-	{
-		m_JingleMain.JingleAdapter().Message().SetJidAndType(cJid.GetBuffer(), ToJingleMessage::REJECT_CALL);
-		m_JingleMain.JingleAdapter().SetEvent();
-	}
+	//显示来电对话框
+	m_pCallCommingDialog->ShowWindow(SW_NORMAL);
+	//循环播放来电铃声
+	//创建播放声音线程
+
+	_tagJidFrom from;
+	from.cJid = cJid;
+	from.pWnd = this;
+	HANDLE hPlayMusic = (HANDLE)_beginthreadex(NULL, 0, PlaySoundFunc, &from, 0, 0);
+	CloseHandle(hPlayMusic);
+	PlaySound(m_strPathIncommingBell);
+	
+
 	return acceptCall;
 }
+
 
 void CLibJingleDlg::AddToStatusDebug(TCHAR* msg)
 {
@@ -558,6 +658,9 @@ void CLibJingleDlg::OnBnClickedCall()
 	m_sJid.GetWindowText(sJID);
 	m_JingleMain.JingleAdapter().Message().SetJidAndType(sJID.GetBuffer(), ToJingleMessage::CALL);
 	m_JingleMain.JingleAdapter().SetEvent();
+	//m_pCallDialog->ShowWindow(SW_NORMAL);
+	m_pCallDialog->DoModal();
+	::SetDlgItemText(m_pCallDialog->m_hWnd, IDC_NAME, sJID);
 }
 
 void CLibJingleDlg::OnBnClickedHangup()
@@ -600,7 +703,7 @@ void CLibJingleDlg::OnBnClickedLogin()
 	if(i == -1)
 	{
 		sUser = sJID;
-		sDomain = _T("gmail.com");
+		sDomain = m_AccountInfo.strDomain.c_str();
 	}
 	else
 	{
@@ -667,12 +770,6 @@ void CLibJingleDlg::OnBnClickedSendmsg()
     m_cChatMsg.SetWindowText(L"");
     m_cChatMsg.SetFocus();
     m_cChatMsg.UpdateData(FALSE);
-}
-
-
-void CAboutDlg::OnEnChangeRichedit21()
-{
-	
 }
 
 

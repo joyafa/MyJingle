@@ -74,7 +74,8 @@
 
 
 
-
+#include "Common.h"
+#include <afxcontrolbars.h>
 
 
 
