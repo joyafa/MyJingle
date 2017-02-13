@@ -121,6 +121,7 @@ CLibJingleDlg::CLibJingleDlg(CWnd* pParent /*=NULL*/)
 	, m_lDebug(_T(""))
 	, m_pCallDialog(NULL)
     , m_pCallCommingDialog(NULL)
+	, m_usbDevice(0x258A, 0x001B)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -253,8 +254,12 @@ BOOL CLibJingleDlg::OnInitDialog()
 	m_pCallCommingDialog->ShowWindow(SW_HIDE);
 
 	//TODO:电话拨打事件
-	m_hBellEvent = CreateEventA(NULL, TRUE, FALSE, NULL);
+	m_hCallEvents[0] = CreateEventA(NULL, TRUE, FALSE, NULL);//接听事件
+	m_hCallEvents[1] = CreateEventA(NULL, TRUE, FALSE, NULL);//挂断事件
 
+	//打开硬件设备
+	m_usbDevice.ConnectDevice();
+	m_usbDevice.ReadData();
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -434,27 +439,33 @@ UINT __stdcall PlaySoundFunc(void *pvoid)
 
 	//电话60s不接听，认为超时，关闭铃声
 	//TODO：是否需要通过配置文件设置
-	DWORD dwRet = WaitForSingleObject(pDlag->m_hBellEvent, 60 * 1000);
-	if (dwRet ==  WAIT_OBJECT_0)
+	DWORD dwRet = WaitForMultipleObjects(2, pDlag->m_hCallEvents, FALSE, 60 * 1000);
+	if (dwRet ==  WAIT_OBJECT_0)//接听事件
 	{
 		//直接停止不行,需要发送消息
 		PostMessage(pDlag->m_hWnd, WM_STOPMUSIC, NULL, NULL);
 		//pDlag->StopPlay();
 		//重置为无信号状态
 		//调用 SetEvent设置有信号之后,需要调用reset设置为无信号
-		ResetEvent(pDlag->m_hBellEvent);
+		ResetEvent(pDlag->m_hCallEvents[0]);
 
 		//TODO： 
 		//接听
 		pDlag->GetJingleMain().JingleAdapter().Message().SetJidAndType(pFrom->cJid.GetBuffer(), ToJingleMessage::ACCEPT_CALL);
 		pDlag->GetJingleMain().JingleAdapter().SetEvent();
 	}
-	else //超时停止 或 异常 都停止
+	else  //挂断事件,超时停止 或 异常 都停止
 	{
 		PostMessage(pDlag->m_hWnd, WM_STOPMUSIC, NULL, NULL);
 		//超时或者是拒绝进接听
 		pDlag->GetJingleMain().JingleAdapter().Message().SetJidAndType(pFrom->cJid.GetBuffer(), ToJingleMessage::REJECT_CALL);
 		pDlag->GetJingleMain().JingleAdapter().SetEvent();
+
+		if (dwRet ==  WAIT_OBJECT_0 + 1)
+		{
+			//设置为无信号
+			ResetEvent(pDlag->m_hCallEvents[1]);
+		}
 	}
 
 	return 1;

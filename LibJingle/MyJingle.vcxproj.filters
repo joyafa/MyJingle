@@ -40,6 +40,9 @@
     <Filter Include="App\ButtonSt">
       <UniqueIdentifier>{d2bcfb04-5554-414d-9440-f64240d18a27}</UniqueIdentifier>
     </Filter>
+    <Filter Include="App\Hardware">
+      <UniqueIdentifier>{a0032c49-cf37-49ac-bfd3-3ec0ee209ba0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\References\beat\Codec.h">
@@ -122,6 +125,18 @@
     </ClInclude>
     <ClInclude Include="button\HyperLink.h">
       <Filter>App\ButtonSt</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\hidpi.h">
+      <Filter>App\Hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\hidsdi.h">
+      <Filter>App\Hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\hidusage.h">
+      <Filter>App\Hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\UsbDevice.h">
+      <Filter>App\Hardware</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +262,9 @@
     </ClCompile>
     <ClCompile Include="button\HyperLink.cpp">
       <Filter>App\ButtonSt</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\UsbDevice.cpp">
+      <Filter>App\Hardware</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

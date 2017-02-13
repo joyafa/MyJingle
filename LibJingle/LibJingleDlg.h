@@ -31,6 +31,7 @@
 #include "CallDialog.h"
 #include "CallCommingDialog.h"
 #include "MCIPlayMusic.h"
+#include "UsbDevice.h"
 
 
 struct _tagJidFrom
@@ -150,8 +151,8 @@ public:
 	CEdit m_cPasswd;
 public:
     afx_msg void OnBnClickedSendmsg();
-
-	HANDLE m_hBellEvent;
+	//0:接听事件;1:挂断事件
+	HANDLE m_hCallEvents[2];
 
 private:
 	AccountInfo m_AccountInfo;
@@ -165,5 +166,8 @@ private:
 	std::string m_strPathBusyBell;
 	std::string m_strPathDialingBell;
 
+	//MCI声音播放设备
 	CMCIPlayMusic m_mciMusic;
+    //usb开关设备
+	CUsbDevice m_usbDevice;
 };
