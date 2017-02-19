@@ -2,7 +2,16 @@
 #include <string>
 #include <concrt.h>
 #include <winbase.h>
+#include <windef.h>
 using namespace std;
+
+#define WM_PHONE (WM_USER + 4)
+
+enum HardwareEventType
+{
+	LEFT_KEY,  //左键,一般为呼叫
+	RIGHT_KEY  //右键,一般为挂断或拒绝接听
+};
 
 class CUsbDevice
 {
@@ -32,7 +41,14 @@ public:
 	{
 		return (m_hidHandle != INVALID_HANDLE_VALUE);
 	}
-public:
+
+	void SetOwner(HWND hWnd)
+	{
+		m_hWnd = hWnd; 
+	}
+
+	//主界面所在窗口句柄
+	HWND m_hWnd;
 	//PID
 	int m_usbPid;
     //VID

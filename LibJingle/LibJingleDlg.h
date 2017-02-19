@@ -36,8 +36,17 @@
 
 struct _tagJidFrom
 {
-	CString cJid;
+	CString sJid;
 	CWnd *pWnd;
+};
+
+enum CallStatus
+{
+	DIALING    = 0, //呼叫ing
+	ACCEPTING     , //接听ing: 被叫方,来电铃声提醒,未接听,可以挂断(Reject),可以接听
+	DIALSIE_ONLINE   , //主叫方通话中,可以挂断(Hangup),或者等对方挂断(收到对方什么消息)
+	ACCEPTSIE_ONLINE  , //被叫通话中,可以挂断(Hangup),或者等对方挂断(收到对方什么消息)
+	BUSYING         //呼叫超时,忙音
 };
 
 // CLibJingleDlg dialog
@@ -84,7 +93,6 @@ protected:
 	// Description: 启动时,通过数据库服务器,获取登录用户名和密码,通过IP地址方式获取,从用户资料表中获取,要求管理员需要按照ip地址配置好用户名和密码之类的信息
 	//************************************
 	AccountInfo GetUserPasswordFromServer();
-	LRESULT OnHardwareMessage(WPARAM wParam, LPARAM lParam);
 	CString GetMoudlePath();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
@@ -93,7 +101,8 @@ protected:
 	afx_msg LRESULT OnWM_APP(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnMCINotify(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStopMusic(WPARAM wParam, LPARAM lParam);
-
+	//处理开关按键事件,由硬件读取数据线程发出来的消息
+	afx_msg LRESULT OnHandlePhone(WPARAM wParam, LPARAM lParam);
 
 
 	afx_msg void OnClose();
@@ -151,8 +160,31 @@ public:
 	CEdit m_cPasswd;
 public:
     afx_msg void OnBnClickedSendmsg();
-	//0:接听事件;1:挂断事件
-	HANDLE m_hCallEvents[2];
+	//被叫事件: 0:接听事件;1:挂断事件
+	HANDLE m_hAcceptCallEvents[2];
+	//主叫事件: 0: 
+	HANDLE m_hDialEvents[3];
+
+
+	//TODO:简单处理,1 客户端都是通过开关呼叫方,做呼叫相关的操作状态;
+	//              2 前台服务端,被叫方,只能做接听电话操作,考虑前台呼叫客户端的情况--> 因为有界面,采取界面按钮方式,而非事件方式
+	//记录当前状态: 主叫 还是 接听
+	CallStatus m_callStatus;
+
+	//主叫方 状态:  
+	//拨打-->对方接听-->1对方挂断;2自己挂断(累了,就说到这里吧); 拨打-->超时挂断(对方不接听);拨打--->自己挂断(不想打了,打错了);
+	enum DialSide
+	{
+		//DIALING,  //拨打状态
+		//ONLINE, //通话中
+	};
+
+
+	//被叫方
+	enum AcceptSide
+	{
+
+	};
 
 private:
 	AccountInfo m_AccountInfo;
@@ -165,6 +197,9 @@ private:
 	std::string m_strPathIncommingBell;
 	std::string m_strPathBusyBell;
 	std::string m_strPathDialingBell;
+
+	
+
 
 	//MCI声音播放设备
 	CMCIPlayMusic m_mciMusic;

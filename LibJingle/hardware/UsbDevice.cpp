@@ -74,6 +74,19 @@ void  RecvThreadFunction(LPVOID lpParameter   )
 			{
 				sprintf(&tem[j],"%02X ",(UCHAR)recvDataBuf[i]);
 			}
+			//TODO:如果读到是开关数据, 接听或挂断
+			HardwareEventType hardwareEvent;
+			if (1)
+			{
+				hardwareEvent = LEFT_KEY;
+			}
+			else
+			{
+				hardwareEvent = RIGHT_KEY;
+			}
+
+			SendMessage(pUsbDevice->m_hWnd, WM_PHONE, (WPARAM)hardwareEvent, (LPARAM)NULL);
+			
 			sprintf(tem2,"%02X %02X %02X %02X %02X %02X \n",(UCHAR)recvDataBuf[2],(UCHAR)recvDataBuf[3],(UCHAR)recvDataBuf[4],(UCHAR)recvDataBuf[5],(UCHAR)recvDataBuf[6],(UCHAR)recvDataBuf[7]);
 			OutputDebugStringA(tem2);
 			strcat(tem,tem2);

@@ -43,10 +43,6 @@ using namespace std;
 #define new DEBUG_NEW
 #endif
 
-typedef void (*installHook)(HWND, DWORD);
-#define WM_MM (WM_USER + 2)
-#define WM_MAX_SHOW (WM_USER + 3)
-
 // CAboutDlg dialog used for App About
 
 class CAboutDlg : public CDialog
@@ -157,6 +153,7 @@ void CLibJingleDlg::DoDataExchange(CDataExchange* pDX)
 
 #define WM_SHOWTASK WM_USER  + 1 
 #define WM_STOPMUSIC WM_USER + 2
+#define WM_MAX_SHOW (WM_USER + 3)
 
 NOTIFYICONDATA nid; 
 
@@ -170,7 +167,6 @@ BEGIN_MESSAGE_MAP(CLibJingleDlg, CDialog)
 
 	//}}AFX_MSG_MAP
 	ON_MESSAGE(WM_APP, &CLibJingleDlg::OnWM_APP)
-	ON_MESSAGE(WM_MM, &CLibJingleDlg::OnHardwareMessage)
 	
 	ON_BN_CLICKED(IDCALL, &CLibJingleDlg::OnBnClickedCall)
 	ON_BN_CLICKED(WM_MAX_SHOW, &CLibJingleDlg::OnBnClickedShowMax)
@@ -184,7 +180,7 @@ BEGIN_MESSAGE_MAP(CLibJingleDlg, CDialog)
 	//	ON_EN_CHANGE(IDC_JID2, &CLibJingleDlg::OnEnChangeJid2)
 	ON_MESSAGE(MM_MCINOTIFY, &CLibJingleDlg::OnMCINotify)
 	ON_MESSAGE(WM_STOPMUSIC, &CLibJingleDlg::OnStopMusic)
-
+	ON_MESSAGE(WM_PHONE,     &CLibJingleDlg::OnHandlePhone)
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDSENDMSG, &CLibJingleDlg::OnBnClickedSendmsg)
 END_MESSAGE_MAP()
@@ -242,22 +238,27 @@ BOOL CLibJingleDlg::OnInitDialog()
 		PostMessage(WM_CLOSE, 0, 0);
 	}
 
-	//呼叫对话框
+	//主叫对话框,
 	m_pCallDialog = new CCallDialog;
 	m_pCallDialog->Create(IDD_CALL_DIALOG, this);
-	//先隐藏，呼叫
 	m_pCallDialog->ShowWindow(SW_HIDE);
 
-	//来电对话框，来电时显示
+	//被叫对话框
 	m_pCallCommingDialog = new CCallCommingDialog;
 	m_pCallCommingDialog->Create(IDD_CALLCOMMING_DIALOG, this);
 	m_pCallCommingDialog->ShowWindow(SW_HIDE);
 
-	//TODO:电话拨打事件
-	m_hCallEvents[0] = CreateEventA(NULL, TRUE, FALSE, NULL);//接听事件
-	m_hCallEvents[1] = CreateEventA(NULL, TRUE, FALSE, NULL);//挂断事件
+	//被叫事件
+	m_hAcceptCallEvents[0] = CreateEventA(NULL, TRUE, FALSE, NULL);//接听事件
+	m_hAcceptCallEvents[1] = CreateEventA(NULL, TRUE, FALSE, NULL);//挂断事件
+
+	//主叫事件
+	m_hDialEvents[0] = CreateEventA(NULL, TRUE, FALSE, NULL);//主叫事件
+	m_hDialEvents[1] = CreateEventA(NULL, TRUE, FALSE, NULL);//主动挂断事件
+	m_hDialEvents[2] = CreateEventA(NULL, TRUE, FALSE, NULL);//被动挂断事件(对方挂断事件)
 
 	//打开硬件设备
+	m_usbDevice.SetOwner(m_hWnd);
 	m_usbDevice.ConnectDevice();
 	m_usbDevice.ReadData();
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -268,8 +269,21 @@ LRESULT CLibJingleDlg::OnMCINotify(WPARAM wParam, LPARAM lParam)
 {  
 	if (wParam == MCI_NOTIFY_SUCCESSFUL )  
 	{  
-		//TODO:PATH是否通过lParam传
-		//PlaySound(m_strFilePath);  
+		//呼叫
+		if(DIALING == m_callStatus)
+		{
+			PlaySound(m_strPathDialingBell);
+		}
+		//接听
+		else if ( ACCEPTING == m_callStatus)
+		{
+			PlaySound(m_strPathIncommingBell);
+		}
+		//忙音
+		else
+		{
+			PlaySound(m_strPathBusyBell);
+		}
 	}  
 	return 0;  
 }  
@@ -281,6 +295,35 @@ LRESULT CLibJingleDlg::OnStopMusic( WPARAM wParam, LPARAM lParam )
 	return 1;
 }
 
+
+LRESULT CLibJingleDlg::OnHandlePhone( WPARAM wParam, LPARAM lParam )
+{
+	HardwareEventType event = (HardwareEventType)wParam;
+
+	switch (event)
+	{
+		//呼叫
+	case LEFT_KEY:
+		//根据当前状态,做相关处理
+		break;
+		//挂断
+	case RIGHT_KEY:
+		//主叫方通话中
+		if (DIALSIE_ONLINE == m_callStatus )
+		{
+			//挂断
+			//SetEvent();
+		}
+		else if (ACCEPTSIE_ONLINE == m_callStatus )
+		{
+			//挂断
+			//SetEvent();
+		}
+		break;
+	}
+
+	return 1;
+}
 
 void CLibJingleDlg::GetConfigInfo()
 {
@@ -349,33 +392,6 @@ AccountInfo CLibJingleDlg::GetUserPasswordFromServer()
 }
 
 
-LRESULT CLibJingleDlg::OnHardwareMessage(WPARAM wParam, LPARAM lParam)
-{
-	CString objTip;
-	MSLLHOOKSTRUCT* pp = (MSLLHOOKSTRUCT*)lParam;
-	//objTip.Format(_T("%d, %d"), pp->pt.x, pp->pt.y);
-	//SetWindowText(objTip);
-
-	switch(wParam)
-	{
-		//左键打电话
-	case WM_LBUTTONDOWN:
-		//TODO：当打了之后，重复按要屏蔽
-		OnBnClickedCall();
-		break;
-	   //右键挂断电话
-	case WM_RBUTTONDOWN:
-		//TODO:要检查，正在通话中才能执行挂断，否则不处理
-		OnBnClickedHangup();
-		break;
-	default:
-		break;
-	}
-
-	return 1;
-}
-
-
 CString CLibJingleDlg::GetMoudlePath()
 {
 	CString strFileName;
@@ -431,7 +447,7 @@ void CLibJingleDlg::OnBnClickedShowMax()
 }
 
 
-UINT __stdcall PlaySoundFunc(void *pvoid)
+UINT __stdcall AcceptCallFunc(void *pvoid)
 {
 	_tagJidFrom *pFrom = (_tagJidFrom *)pvoid;
 	CLibJingleDlg *pDlag = (CLibJingleDlg *)pFrom->pWnd;
@@ -439,7 +455,7 @@ UINT __stdcall PlaySoundFunc(void *pvoid)
 
 	//电话60s不接听，认为超时，关闭铃声
 	//TODO：是否需要通过配置文件设置
-	DWORD dwRet = WaitForMultipleObjects(2, pDlag->m_hCallEvents, FALSE, 60 * 1000);
+	DWORD dwRet = WaitForMultipleObjects(2, pDlag->m_hAcceptCallEvents, FALSE, 60 * 1000);
 	if (dwRet ==  WAIT_OBJECT_0)//接听事件
 	{
 		//直接停止不行,需要发送消息
@@ -447,24 +463,25 @@ UINT __stdcall PlaySoundFunc(void *pvoid)
 		//pDlag->StopPlay();
 		//重置为无信号状态
 		//调用 SetEvent设置有信号之后,需要调用reset设置为无信号
-		ResetEvent(pDlag->m_hCallEvents[0]);
+		ResetEvent(pDlag->m_hAcceptCallEvents[0]);
 
 		//TODO： 
+		pDlag->m_callStatus = ACCEPTSIE_ONLINE;
 		//接听
-		pDlag->GetJingleMain().JingleAdapter().Message().SetJidAndType(pFrom->cJid.GetBuffer(), ToJingleMessage::ACCEPT_CALL);
+		pDlag->GetJingleMain().JingleAdapter().Message().SetJidAndType(pFrom->sJid.GetBuffer(), ToJingleMessage::ACCEPT_CALL);
 		pDlag->GetJingleMain().JingleAdapter().SetEvent();
 	}
 	else  //挂断事件,超时停止 或 异常 都停止
 	{
 		PostMessage(pDlag->m_hWnd, WM_STOPMUSIC, NULL, NULL);
-		//超时或者是拒绝进接听
-		pDlag->GetJingleMain().JingleAdapter().Message().SetJidAndType(pFrom->cJid.GetBuffer(), ToJingleMessage::REJECT_CALL);
+		//1. 超时或者是拒绝进接听
+		pDlag->GetJingleMain().JingleAdapter().Message().SetJidAndType(pFrom->sJid.GetBuffer(), ToJingleMessage::REJECT_CALL);
 		pDlag->GetJingleMain().JingleAdapter().SetEvent();
-
+		//2. 接听过程中,需要挂断
 		if (dwRet ==  WAIT_OBJECT_0 + 1)
 		{
 			//设置为无信号
-			ResetEvent(pDlag->m_hCallEvents[1]);
+			ResetEvent(pDlag->m_hAcceptCallEvents[1]);
 		}
 	}
 
@@ -487,6 +504,9 @@ void CLibJingleDlg::PlaySound(const std::string &strSonndPath)
 
 bool CLibJingleDlg::AcceptCallFrom(const char* jid)
 {
+	//接听状态
+	m_callStatus = ACCEPTING;
+
 	bool acceptCall(false);
 	CString cJid(jid);
 	CString message(_T("您有新的来电: "));
@@ -499,12 +519,13 @@ bool CLibJingleDlg::AcceptCallFrom(const char* jid)
 	//创建播放声音线程
 
 	_tagJidFrom from;
-	from.cJid = cJid;
+	from.sJid = cJid;
 	from.pWnd = this;
-	HANDLE hPlayMusic = (HANDLE)_beginthreadex(NULL, 0, PlaySoundFunc, &from, 0, 0);
+	//状态1: 新来电，可以 接听 or 挂断
+	//状态2: 通话中,可以挂断;
+	HANDLE hPlayMusic = (HANDLE)_beginthreadex(NULL, 0, AcceptCallFunc, &from, 0, 0);
 	CloseHandle(hPlayMusic);
 	PlaySound(m_strPathIncommingBell);
-	
 
 	return acceptCall;
 }
@@ -663,17 +684,77 @@ void CLibJingleDlg::OnClose()
 	this->ShowWindow(SW_HIDE); 
 }
 
+
+UINT __stdcall DialFunc(void *pvoid)
+{
+	_tagJidFrom *pFrom = (_tagJidFrom *)pvoid;
+	CLibJingleDlg *pDlag = (CLibJingleDlg *)pFrom->pWnd;
+	if (NULL== pDlag) return 0;
+
+	//呼叫60s对方不接听，认为超时，关闭铃声
+	//TODO:是否要忙音
+	//TODO：是否需要通过配置文件设置超时时间
+	DWORD dwRet = WaitForMultipleObjects(2, pDlag->m_hDialEvents, FALSE, 60 * 1000);
+	if (dwRet ==  WAIT_OBJECT_0)//接听事件
+	{
+		//直接停止不行,需要发送消息
+		PostMessage(pDlag->m_hWnd, WM_STOPMUSIC, NULL, NULL);
+		//pDlag->StopPlay();
+		//重置为无信号状态
+		//调用 SetEvent设置有信号之后,需要调用reset设置为无信号
+		ResetEvent(pDlag->m_hDialEvents[0]);
+
+		//TODO： 
+		//接听
+		pDlag->GetJingleMain().JingleAdapter().Message().SetJidAndType(pFrom->sJid.GetBuffer(), ToJingleMessage::ACCEPT_CALL);
+		pDlag->GetJingleMain().JingleAdapter().SetEvent();
+	}
+	else  //挂断事件,超时停止 或 异常 都停止
+	{
+		PostMessage(pDlag->m_hWnd, WM_STOPMUSIC, NULL, NULL);
+		//超时或者是拒绝进接听
+		pDlag->GetJingleMain().JingleAdapter().Message().SetJidAndType(pFrom->sJid.GetBuffer(), ToJingleMessage::REJECT_CALL);
+		pDlag->GetJingleMain().JingleAdapter().SetEvent();
+
+		if (dwRet ==  WAIT_OBJECT_0 + 1)
+		{
+			//设置为无信号
+			ResetEvent(pDlag->m_hDialEvents[1]);
+		}
+	}
+
+	return 1;
+}
+
+//呼叫
 void CLibJingleDlg::OnBnClickedCall()
 {
 	CString sJID;
 	m_sJid.GetWindowText(sJID);
+
+	//主叫状态
+    m_callStatus = DIALING;
+
+	_tagJidFrom from;
+	from.sJid = sJID;
+	from.pWnd = this;
+
+	//状态1: 呼叫,可以自行挂断;
+	//状态2: 呼叫超时不接听,本地听到忙音
+	HANDLE hPlayMusic = (HANDLE)_beginthreadex(NULL, 0, DialFunc, &from, 0, 0);
+	CloseHandle(hPlayMusic);
+	PlaySound(m_strPathDialingBell);//打电话
+
+	//发起呼叫动作
 	m_JingleMain.JingleAdapter().Message().SetJidAndType(sJID.GetBuffer(), ToJingleMessage::CALL);
 	m_JingleMain.JingleAdapter().SetEvent();
-	//m_pCallDialog->ShowWindow(SW_NORMAL);
-	m_pCallDialog->DoModal();
+
+	//显示呼叫界面
+	m_pCallDialog->ShowWindow(SW_NORMAL);
 	::SetDlgItemText(m_pCallDialog->m_hWnd, IDC_NAME, sJID);
 }
 
+//挂断对方电话
 void CLibJingleDlg::OnBnClickedHangup()
 {
 	m_JingleMain.JingleAdapter().Message().Type(ToJingleMessage::HANGUP);
