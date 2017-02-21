@@ -15,6 +15,12 @@ public:
 // 对话框数据
 	enum { IDD = IDD_CALL_DIALOG };
 
+	void SetJidName(const CString &strJid)
+	{
+		SetDlgItemText(IDC_NAME, strJid);
+	}
+
+	
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 

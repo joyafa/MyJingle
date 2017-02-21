@@ -37,6 +37,5 @@ END_MESSAGE_MAP()
 BOOL CCallDialog::OnEraseBkgnd(CDC* pDC)
 {
 	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌÐò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
-	return TRUE;
 	return CDialogEx::OnEraseBkgnd(pDC);
 }

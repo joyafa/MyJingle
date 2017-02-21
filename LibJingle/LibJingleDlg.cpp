@@ -118,6 +118,7 @@ CLibJingleDlg::CLibJingleDlg(CWnd* pParent /*=NULL*/)
 	, m_pCallDialog(NULL)
     , m_pCallCommingDialog(NULL)
 	, m_usbDevice(0x258A, 0x001B)
+	, m_callStatus(INITIAL)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -255,7 +256,6 @@ BOOL CLibJingleDlg::OnInitDialog()
 	//主叫事件
 	m_hDialEvents[0] = CreateEventA(NULL, TRUE, FALSE, NULL);//主叫事件
 	m_hDialEvents[1] = CreateEventA(NULL, TRUE, FALSE, NULL);//主动挂断事件
-	m_hDialEvents[2] = CreateEventA(NULL, TRUE, FALSE, NULL);//被动挂断事件(对方挂断事件)
 
 	//打开硬件设备
 	m_usbDevice.SetOwner(m_hWnd);
@@ -304,20 +304,33 @@ LRESULT CLibJingleDlg::OnHandlePhone( WPARAM wParam, LPARAM lParam )
 	{
 		//呼叫
 	case LEFT_KEY:
-		//根据当前状态,做相关处理
+		//呼叫模式, 因为收到来电,状态会变成ACCEPTING
+		if (INITIAL == m_callStatus)
+		{
+			OnBnClickedCall();
+		}
 		break;
 		//挂断
 	case RIGHT_KEY:
 		//主叫方通话中
-		if (DIALSIE_ONLINE == m_callStatus )
+		if (ONLINE == m_callStatus )
 		{
-			//挂断
-			//SetEvent();
+			//挂断 hangup
+			OnBnClickedHangup();
 		}
-		else if (ACCEPTSIE_ONLINE == m_callStatus )
+		else if ( DIALING == m_callStatus )//拨号响铃...
 		{
-			//挂断
+			//取消拨号了  TODO: 取消拨号是怎么弄的???
 			//SetEvent();
+			m_pCallDialog->ShowWindow(SW_HIDE);
+			m_callStatus = INITIAL;
+		}
+		else if (ACCEPTING == m_callStatus)//来电响铃...
+		{
+			//reject
+			SetEvent(m_hAcceptCallEvents[1]);
+			m_pCallCommingDialog->ShowWindow(SW_HIDE);
+			m_callStatus = INITIAL;
 		}
 		break;
 	}
@@ -446,6 +459,9 @@ void CLibJingleDlg::OnBnClickedShowMax()
 	Shell_NotifyIcon(NIM_DELETE,&nid); 
 }
 
+//TODO:接听过程中,不会有该线程的存在,也就不会有等待事件的情况,只要通过当前的状态,检查当前出于什么状态;
+// 1. 通话中,则发送挂断指令;hangup
+// 2. 响铃中,这reject;
 
 UINT __stdcall AcceptCallFunc(void *pvoid)
 {
@@ -455,18 +471,16 @@ UINT __stdcall AcceptCallFunc(void *pvoid)
 
 	//电话60s不接听，认为超时，关闭铃声
 	//TODO：是否需要通过配置文件设置
-	DWORD dwRet = WaitForMultipleObjects(2, pDlag->m_hAcceptCallEvents, FALSE, 60 * 1000);
+	DWORD dwRet = WaitForMultipleObjects(2, pDlag->m_hAcceptCallEvents, FALSE, 10 * 1000);
 	if (dwRet ==  WAIT_OBJECT_0)//接听事件
 	{
 		//直接停止不行,需要发送消息
 		PostMessage(pDlag->m_hWnd, WM_STOPMUSIC, NULL, NULL);
-		//pDlag->StopPlay();
 		//重置为无信号状态
 		//调用 SetEvent设置有信号之后,需要调用reset设置为无信号
 		ResetEvent(pDlag->m_hAcceptCallEvents[0]);
 
-		//TODO： 
-		pDlag->m_callStatus = ACCEPTSIE_ONLINE;
+		pDlag->m_callStatus = ONLINE;
 		//接听
 		pDlag->GetJingleMain().JingleAdapter().Message().SetJidAndType(pFrom->sJid.GetBuffer(), ToJingleMessage::ACCEPT_CALL);
 		pDlag->GetJingleMain().JingleAdapter().SetEvent();
@@ -477,14 +491,12 @@ UINT __stdcall AcceptCallFunc(void *pvoid)
 		//1. 超时或者是拒绝进接听
 		pDlag->GetJingleMain().JingleAdapter().Message().SetJidAndType(pFrom->sJid.GetBuffer(), ToJingleMessage::REJECT_CALL);
 		pDlag->GetJingleMain().JingleAdapter().SetEvent();
-		//2. 接听过程中,需要挂断
-		if (dwRet ==  WAIT_OBJECT_0 + 1)
-		{
-			//设置为无信号
-			ResetEvent(pDlag->m_hAcceptCallEvents[1]);
-		}
+		//设置为无信号
+		ResetEvent(pDlag->m_hAcceptCallEvents[1]);
+		pDlag->m_callStatus = INITIAL;
 	}
 
+	delete pFrom;
 	return 1;
 }
 
@@ -514,16 +526,16 @@ bool CLibJingleDlg::AcceptCallFrom(const char* jid)
 	message.Append(_T("\r\n 是否接听?"));
 
 	//显示来电对话框
-	m_pCallCommingDialog->ShowWindow(SW_NORMAL);
+	//m_pCallCommingDialog->ShowWindow(SW_NORMAL);
 	//循环播放来电铃声
 	//创建播放声音线程
 
-	_tagJidFrom from;
-	from.sJid = cJid;
-	from.pWnd = this;
+	_tagJidFrom *pFrom = new _tagJidFrom;
+	pFrom->sJid = cJid;
+	pFrom->pWnd = this;
 	//状态1: 新来电，可以 接听 or 挂断
 	//状态2: 通话中,可以挂断;
-	HANDLE hPlayMusic = (HANDLE)_beginthreadex(NULL, 0, AcceptCallFunc, &from, 0, 0);
+	HANDLE hPlayMusic = (HANDLE)_beginthreadex(NULL, 0, AcceptCallFunc, pFrom, 0, 0);
 	CloseHandle(hPlayMusic);
 	PlaySound(m_strPathIncommingBell);
 
@@ -694,34 +706,26 @@ UINT __stdcall DialFunc(void *pvoid)
 	//呼叫60s对方不接听，认为超时，关闭铃声
 	//TODO:是否要忙音
 	//TODO：是否需要通过配置文件设置超时时间
-	DWORD dwRet = WaitForMultipleObjects(2, pDlag->m_hDialEvents, FALSE, 60 * 1000);
+	//TODO: 这个接听信号,需要在收到接听应答发送的信号
+	DWORD dwRet = WaitForMultipleObjects(2, pDlag->m_hDialEvents, FALSE, 10 * 1000);
 	if (dwRet ==  WAIT_OBJECT_0)//接听事件
 	{
 		//直接停止不行,需要发送消息
 		PostMessage(pDlag->m_hWnd, WM_STOPMUSIC, NULL, NULL);
-		//pDlag->StopPlay();
+		pDlag->m_callStatus = ONLINE;
 		//重置为无信号状态
 		//调用 SetEvent设置有信号之后,需要调用reset设置为无信号
 		ResetEvent(pDlag->m_hDialEvents[0]);
-
-		//TODO： 
-		//接听
-		pDlag->GetJingleMain().JingleAdapter().Message().SetJidAndType(pFrom->sJid.GetBuffer(), ToJingleMessage::ACCEPT_CALL);
-		pDlag->GetJingleMain().JingleAdapter().SetEvent();
 	}
 	else  //挂断事件,超时停止 或 异常 都停止
 	{
 		PostMessage(pDlag->m_hWnd, WM_STOPMUSIC, NULL, NULL);
-		//超时或者是拒绝进接听
-		pDlag->GetJingleMain().JingleAdapter().Message().SetJidAndType(pFrom->sJid.GetBuffer(), ToJingleMessage::REJECT_CALL);
-		pDlag->GetJingleMain().JingleAdapter().SetEvent();
-
-		if (dwRet ==  WAIT_OBJECT_0 + 1)
-		{
-			//设置为无信号
-			ResetEvent(pDlag->m_hDialEvents[1]);
-		}
+		//设置为无信号
+		ResetEvent(pDlag->m_hDialEvents[1]);
+		pDlag->m_callStatus = INITIAL;
 	}
+
+	delete pFrom;
 
 	return 1;
 }
@@ -731,17 +735,19 @@ void CLibJingleDlg::OnBnClickedCall()
 {
 	CString sJID;
 	m_sJid.GetWindowText(sJID);
+	m_pCallDialog->SetJidName(sJID);
+	m_pCallDialog->ShowWindow(SW_NORMAL);
 
 	//主叫状态
     m_callStatus = DIALING;
 
-	_tagJidFrom from;
-	from.sJid = sJID;
-	from.pWnd = this;
+	_tagJidFrom *pFrom = new _tagJidFrom;
+	pFrom->sJid = sJID;
+	pFrom->pWnd = this;
 
 	//状态1: 呼叫,可以自行挂断;
 	//状态2: 呼叫超时不接听,本地听到忙音
-	HANDLE hPlayMusic = (HANDLE)_beginthreadex(NULL, 0, DialFunc, &from, 0, 0);
+	HANDLE hPlayMusic = (HANDLE)_beginthreadex(NULL, 0, DialFunc, pFrom, 0, 0);
 	CloseHandle(hPlayMusic);
 	PlaySound(m_strPathDialingBell);//打电话
 
@@ -757,6 +763,10 @@ void CLibJingleDlg::OnBnClickedCall()
 //挂断对方电话
 void CLibJingleDlg::OnBnClickedHangup()
 {
+	//挂断,则打电话 接听电话对话框隐藏
+	m_pCallDialog->ShowWindow(SW_HIDE);
+	m_pCallCommingDialog->ShowWindow(SW_HIDE);
+	m_callStatus = INITIAL;
 	m_JingleMain.JingleAdapter().Message().Type(ToJingleMessage::HANGUP);
 	m_JingleMain.JingleAdapter().SetEvent();
 }

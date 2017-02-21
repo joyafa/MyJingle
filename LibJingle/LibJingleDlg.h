@@ -42,10 +42,10 @@ struct _tagJidFrom
 
 enum CallStatus
 {
-	DIALING    = 0, //呼叫ing
+	INITIAL    = 0, //初始状态     
+	DIALING    = 1, //呼叫ing
 	ACCEPTING     , //接听ing: 被叫方,来电铃声提醒,未接听,可以挂断(Reject),可以接听
-	DIALSIE_ONLINE   , //主叫方通话中,可以挂断(Hangup),或者等对方挂断(收到对方什么消息)
-	ACCEPTSIE_ONLINE  , //被叫通话中,可以挂断(Hangup),或者等对方挂断(收到对方什么消息)
+	ONLINE        , //通话中,可以挂断(Hangup),或者等对方挂断(收到对方什么消息)
 	BUSYING         //呼叫超时,忙音
 };
 
@@ -163,7 +163,7 @@ public:
 	//被叫事件: 0:接听事件;1:挂断事件
 	HANDLE m_hAcceptCallEvents[2];
 	//主叫事件: 0: 
-	HANDLE m_hDialEvents[3];
+	HANDLE m_hDialEvents[2];
 
 
 	//TODO:简单处理,1 客户端都是通过开关呼叫方,做呼叫相关的操作状态;
