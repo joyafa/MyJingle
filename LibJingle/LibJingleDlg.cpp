@@ -472,7 +472,7 @@ UINT __stdcall AcceptCallFunc(void *pvoid)
 	//电话60s不接听，认为超时，关闭铃声
 	//TODO：是否需要通过配置文件设置
 	DWORD dwRet = WaitForMultipleObjects(2, pDlag->m_hAcceptCallEvents, FALSE, 10 * 1000);
-	if (dwRet ==  WAIT_OBJECT_0)//接听事件
+	if (dwRet ==  WAIT_OBJECT_0 )//接听事件
 	{
 		//直接停止不行,需要发送消息
 		PostMessage(pDlag->m_hWnd, WM_STOPMUSIC, NULL, NULL);
@@ -696,6 +696,33 @@ void CLibJingleDlg::OnClose()
 	this->ShowWindow(SW_HIDE); 
 }
 
+void CLibJingleDlg::SetAnswerEvent()
+{
+	//被对方接听.设置信号
+	if (DIALING == m_callStatus)
+	{
+		SetEvent(m_hDialEvents[0]);
+	}
+	//不去详细判断当前出于哪个信号等待状态, 主叫 / 被叫 信号都设置起来
+	if (ACCEPTING ==  m_callStatus )
+	{
+		SetEvent(m_hAcceptCallEvents[0]);
+	}
+}
+
+
+void CLibJingleDlg::SetRejectEvent()
+{
+	//被对方拒绝或中断.设置信号
+	if (DIALING == m_callStatus)
+	{
+		SetEvent(m_hDialEvents[1]);
+	}
+	if (ACCEPTING ==  m_callStatus )
+	{
+		SetEvent(m_hAcceptCallEvents[1]);
+	}
+}
 
 UINT __stdcall DialFunc(void *pvoid)
 {
@@ -706,7 +733,6 @@ UINT __stdcall DialFunc(void *pvoid)
 	//呼叫60s对方不接听，认为超时，关闭铃声
 	//TODO:是否要忙音
 	//TODO：是否需要通过配置文件设置超时时间
-	//TODO: 这个接听信号,需要在收到接听应答发送的信号
 	DWORD dwRet = WaitForMultipleObjects(2, pDlag->m_hDialEvents, FALSE, 10 * 1000);
 	if (dwRet ==  WAIT_OBJECT_0)//接听事件
 	{

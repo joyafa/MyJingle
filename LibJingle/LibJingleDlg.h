@@ -106,8 +106,12 @@ protected:
 
 
 	afx_msg void OnClose();
-    LRESULT OnShowTask(WPARAM wParam,LPARAM lParam);
+	LRESULT OnShowTask(WPARAM wParam,LPARAM lParam);
 public:
+	//当接听方接听后,触发事件有信号
+	void SetAnswerEvent();
+	//拒绝 / 中断 设置信号
+	void SetRejectEvent();
 	void AddToRoster(const char* jid);
 	void RemoveFromRoster(const char* jid);
 	bool AcceptCallFrom(const char* jid);
@@ -162,7 +166,7 @@ public:
     afx_msg void OnBnClickedSendmsg();
 	//被叫事件: 0:接听事件;1:挂断事件
 	HANDLE m_hAcceptCallEvents[2];
-	//主叫事件: 0: 
+	//主叫事件: 0:接听事件;1:挂断事件
 	HANDLE m_hDialEvents[2];
 
 

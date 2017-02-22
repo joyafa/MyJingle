@@ -257,9 +257,11 @@ void CCallChangeMessage::Handle(void)
 	{
 		switch(m_Type)
 		{
+		case CCallChangeMessage::ANSWERED:
+			//对方接听了,设置有信号
+			wnd->SetAnswerEvent();
 		case CCallChangeMessage::IN_PROGRESS:
 		case CCallChangeMessage::CALLING:
-		case CCallChangeMessage::ANSWERED:
 			wnd->m_bLogin.EnableWindow(false);
 			wnd->m_bLogout.EnableWindow(true);
 			wnd->m_bCall.EnableWindow(false);
@@ -274,6 +276,8 @@ void CCallChangeMessage::Handle(void)
 			wnd->m_bCall.EnableWindow(true);
 			wnd->m_bHangup.EnableWindow(false);
             wnd->m_bSendmsg.EnableWindow(true);
+			//对方主动挂断
+			wnd->SetRejectEvent();
 			break;
 		case CCallChangeMessage::INCOMING:
 			wnd->AcceptCallFrom(m_sJID.c_str());
