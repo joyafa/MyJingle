@@ -9,6 +9,7 @@ using namespace std;
 
 enum HardwareEventType
 {
+	UNKNOWN_KEY,   //未知
 	LEFT_KEY,  //左键,一般为呼叫
 	RIGHT_KEY  //右键,一般为挂断或拒绝接听
 };
@@ -68,4 +69,6 @@ public:
 	bool m_bExitRecvThread;
 	//退出发送线程
 	bool m_bExitSendThread;
+	//设备路径
+	CString m_strDevicePath;
 };

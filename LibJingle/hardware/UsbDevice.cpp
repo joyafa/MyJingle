@@ -16,10 +16,15 @@ extern "C"
 void RecvThreadFunction(HANDLE m_hidHandle);
 void SendThreadFunction(HANDLE m_hidHandle);
 
+//左键数据:           
+char g_leftKey[]  = {0x00, 0xA5, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+//右键数据:           
+char g_rightKey[] = {0x00, 0x00, 0xA6, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
 void  RecvThreadFunction(LPVOID lpParameter   )
 {
 	CUsbDevice *pUsbDevice = (CUsbDevice *)lpParameter;
-	char *recvDataBuf=new char[RECV_DATA_LEN];
+	char *recvDataBuf=new char[64];
 	DWORD recvdBytes,Result;
 	HANDLE hEventObject;
 	PHIDP_PREPARSED_DATA PreparsedData;
@@ -48,7 +53,7 @@ void  RecvThreadFunction(LPVOID lpParameter   )
 	while(!pUsbDevice->m_bExitRecvThread)
 	{
 		ResetEvent(hEventObject);
-		ZeroMemory(recvDataBuf,RECV_DATA_LEN);
+		ZeroMemory(recvDataBuf,64);
 		Result=ReadFile(pUsbDevice->m_hidHandle, recvDataBuf,Capabilities.InputReportByteLength,
 			&recvdBytes,(LPOVERLAPPED)&HIDOverlapped); //接收数据	(LPOVERLAPPED)&HIDOverlapped
 		ULONG  tang=GetLastError();
@@ -60,39 +65,36 @@ void  RecvThreadFunction(LPVOID lpParameter   )
 		}
 		if(i==1)//不是超时返回则显示数据
 		{
-			CHAR tem[180000]="",tem2[512]="";
-			/*CHAR tem4[3];
-			if(HidP_GetUsageValueArray(HidP_Input,0,0,2,tem4,3,PreparsedData,recvDataBuf,Capabilities.InputReportByteLength)==HIDP_STATUS_SUCCESS)
-			{
-				sprintf(&tem2[0],"%02X %02X %02X ",(UCHAR)tem4[0],(UCHAR)tem4[1],(UCHAR)tem4[2]);				
-			}
-			else
-				sprintf(&tem2[0],"%02X %02X %02X ",(UCHAR)5,(UCHAR)5,(UCHAR)5);
-			*/
-			//TODO: 读数据线程，当读到 a5 a6，就表示开关数据，事件通知准备接听或挂断
-			for(int i=0,j=0;i<Capabilities.InputReportByteLength;i++,j+=3)
-			{
-				sprintf(&tem[j],"%02X ",(UCHAR)recvDataBuf[i]);
-			}
 			//TODO:如果读到是开关数据, 接听或挂断
-			HardwareEventType hardwareEvent;
-			if (1)
+			HardwareEventType hardwareEvent = UNKNOWN_KEY;
+
+			int pos = 0;
+			for ( pos=0;pos<12;++pos)
+			{
+				if (g_leftKey[pos] != recvDataBuf[pos])
+				{
+					break;
+				}
+			}
+			if (pos < 12)
 			{
 				hardwareEvent = LEFT_KEY;
 			}
-			else
+
+			for (int pos=0;hardwareEvent == UNKNOWN_KEY  && pos<12;++pos)
 			{
-				hardwareEvent = RIGHT_KEY;
+				if (g_leftKey[pos] != recvDataBuf[pos])
+				{
+					break;
+				}
+			}
+
+			if (pos < 12)
+			{
+				hardwareEvent = LEFT_KEY;
 			}
 
 			SendMessage(pUsbDevice->m_hWnd, WM_PHONE, (WPARAM)hardwareEvent, (LPARAM)NULL);
-			
-			sprintf(tem2,"%02X %02X %02X %02X %02X %02X \n",(UCHAR)recvDataBuf[2],(UCHAR)recvDataBuf[3],(UCHAR)recvDataBuf[4],(UCHAR)recvDataBuf[5],(UCHAR)recvDataBuf[6],(UCHAR)recvDataBuf[7]);
-			OutputDebugStringA(tem2);
-			strcat(tem,tem2);
-			OutputDebugStringA(tem);
-			ZeroMemory(tem,180000);
-			ZeroMemory(tem2,512);
 		}
 		i=1;
 		Sleep(1);
@@ -203,7 +205,7 @@ CUsbDevice::CUsbDevice( int vid, int pid )
 	, m_bExitRecvThread(false)
 	, m_bExitSendThread(false)
 {
-
+	m_strDevicePath = _T("\\\\?\\hid#vid_258a&pid_001b&mi_00#8&30c6ddd8&0&0000#{4d1e55b2-f16f-11cf-88cb-001111000030}");
 }
 
 CUsbDevice::~CUsbDevice()
@@ -226,6 +228,7 @@ CUsbDevice::~CUsbDevice()
 
 bool CUsbDevice::ConnectDevice()
 {
+#if 0
 	int deviceNo=0;
 	ULONG m_MaxDataLen;
 	char tem[100]="";
@@ -321,7 +324,20 @@ bool CUsbDevice::ConnectDevice()
 	}
 	
 	SetupDiDestroyDeviceInfoList(hDevInfo);
-
+#else
+	m_hidHandle=CreateFile(m_strDevicePath,
+		GENERIC_READ|GENERIC_WRITE,
+		FILE_SHARE_READ|FILE_SHARE_WRITE,
+		NULL,OPEN_EXISTING,FILE_FLAG_OVERLAPPED,NULL);
+	ULONG i = GetLastError();
+	//循环直到找到可以访问的设备
+	if(m_hidHandle==INVALID_HANDLE_VALUE)
+	{
+		char buf[128];
+		sprintf(buf, "%s CreateFile failed: %d \n", m_strDevicePath, GetLastError());
+		OutputDebugStringA(buf);
+	}
+#endif
 	//设备未连接,则显示
 	return (m_hidHandle != INVALID_HANDLE_VALUE);
 }
