@@ -108,7 +108,7 @@
       <ValidateAllParameters>false</ValidateAllParameters>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>.\button\;..\..\poco\Util\include;..\..\poco\XML\include\;..\..\poco\Data\MySQL\include;..\..\poco\Data\include;..\..\poco\Foundation\include;./;../References/Expat-1.95.8/Source/lib;../References/speex/include;../References;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\hardware\;.\button\;..\..\poco\Util\include;..\..\poco\XML\include\;..\..\poco\Data\MySQL\include;..\..\poco\Data\include;..\..\poco\Foundation\include;./;../References/Expat-1.95.8/Source/lib;../References/speex/include;../References;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -123,8 +123,8 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>PocoDatad.lib;PocoFoundationd.lib;Ws2_32.lib;Secur32.lib;iphlpapi.lib;libexpat.lib;libexpatw.lib;Kernel32.lib;Crypt32.lib;winmm.lib;Dsound.lib;libspeex.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\poco\lib;../References/Expat-1.95.8/Libs;../References/speex/bin/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>PocoData.lib;PocoFoundation.lib;Ws2_32.lib;Secur32.lib;iphlpapi.lib;libexpat.lib;libexpatw.lib;Kernel32.lib;Crypt32.lib;winmm.lib;Dsound.lib;libspeex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.\hardware\;..\..\poco\lib;../References/Expat-1.95.8/Libs;../References/speex/bin/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -134,6 +134,9 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <PreLinkEvent>
+      <Command>copy /Y $(OutDir)$(TargetName)$(TargetExt) ..\bin\</Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ProjectReference Include="..\References\talk\libjingle.vcxproj">

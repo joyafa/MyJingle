@@ -204,6 +204,7 @@ CUsbDevice::CUsbDevice( int vid, int pid )
 	, m_hidHandle(INVALID_HANDLE_VALUE)
 	, m_bExitRecvThread(false)
 	, m_bExitSendThread(false)
+	, m_hRecvThread(INVALID_HANDLE_VALUE)
 {
 	m_strDevicePath = _T("\\\\?\\hid#vid_258a&pid_001b&mi_00#8&30c6ddd8&0&0000#{4d1e55b2-f16f-11cf-88cb-001111000030}");
 }

@@ -261,6 +261,9 @@ BOOL CLibJingleDlg::OnInitDialog()
 	m_usbDevice.SetOwner(m_hWnd);
 	m_usbDevice.ConnectDevice();
 	m_usbDevice.ReadData();
+
+	OnBnClickedLogin();
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -608,6 +611,15 @@ void CLibJingleDlg::AddToRoster(const char* jid)
 	{
 		m_lRoster.AddString(cJid);
 	}
+	m_lRoster.SetSel(0);
+
+	int nCurSel = m_lRoster.GetCurSel();
+	if(nCurSel != LB_ERR)
+	{
+		CString sText;
+		m_lRoster.GetText(nCurSel, sText);
+		m_sJid.SetWindowText(sText);
+	}
 }
 
 void CLibJingleDlg::RemoveFromRoster(const char* jid)
@@ -818,8 +830,8 @@ void CLibJingleDlg::OnBnClickedLogin()
 {
 	if(m_JingleMain.Running())
 	{
-		m_JingleMain.JingleAdapter().Message().Type(ToJingleMessage::EXIT);
-		m_JingleMain.JingleAdapter().SetEvent();
+		// m_JingleMain.JingleAdapter().Message().Type(ToJingleMessage::EXIT);
+		// m_JingleMain.JingleAdapter().SetEvent();
 		m_JingleMain.Stop();
 	}
 	CString sJID;
